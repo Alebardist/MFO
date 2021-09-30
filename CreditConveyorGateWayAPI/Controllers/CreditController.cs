@@ -2,14 +2,15 @@
 using Microsoft.Extensions.Logging;
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
+using Newtonsoft.Json;
+using CreditConveyorGateWayAPI.DTO;
+using System.Diagnostics;
 
 namespace CreditConveyorGateWayAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class CreditController : ControllerBase
     {
         private readonly ILogger<CreditController> _logger;
@@ -19,25 +20,34 @@ namespace CreditConveyorGateWayAPI.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
-        [Produces("application/json")]
+        [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        public JsonResult ApproveCredit()
+        public IActionResult ApproveCredit([FromBody] object creditParameters)
         {
             JsonResult result = new JsonResult("");
+
             try
             {
-                throw new Exception("error");
+                CreditParameters creditParametersDTO = JsonConvert.DeserializeObject<CreditParameters>(creditParameters.ToString());
+            }
+            catch (JsonReaderException ex)
+            {
+                result.Value = ex.Message;
+                result.StatusCode = 400;
+
+                Debug.WriteLine(ex.Message);
             }
             catch (Exception ex)
             {
-                result = new JsonResult(ex.Message);
+                result.Value = ex.Message;
+                result.StatusCode = 500;
+
+                Debug.WriteLine(ex.Message);
             }
 
-
-            return result;
+            return new JsonResult(result);
         }
     }
 }
