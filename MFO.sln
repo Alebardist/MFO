@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31710.8
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreditConveyorGateWayAPI", "CreditConveyorGateWayAPI\CreditConveyorGateWayAPI.csproj", "{97D12C37-A7BA-4F9E-B02B-8903657B8691}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CreditConveyorGateWayAPI", "CreditConveyorGateWayAPI\CreditConveyorGateWayAPI.csproj", "{97D12C37-A7BA-4F9E-B02B-8903657B8691}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MFOTest", "MFOTest\MFOTest.csproj", "{6D90DAEA-F94D-4BFD-86CB-22D65DA334AB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BCHGrpcService", "BCHGrpcService\BCHGrpcService.csproj", "{6F6D79D1-DF8E-493C-B1C3-5CAF6C8AA06B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{97D12C37-A7BA-4F9E-B02B-8903657B8691}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{97D12C37-A7BA-4F9E-B02B-8903657B8691}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{97D12C37-A7BA-4F9E-B02B-8903657B8691}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D90DAEA-F94D-4BFD-86CB-22D65DA334AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D90DAEA-F94D-4BFD-86CB-22D65DA334AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D90DAEA-F94D-4BFD-86CB-22D65DA334AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D90DAEA-F94D-4BFD-86CB-22D65DA334AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F6D79D1-DF8E-493C-B1C3-5CAF6C8AA06B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F6D79D1-DF8E-493C-B1C3-5CAF6C8AA06B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F6D79D1-DF8E-493C-B1C3-5CAF6C8AA06B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F6D79D1-DF8E-493C-B1C3-5CAF6C8AA06B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
