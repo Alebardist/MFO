@@ -1,0 +1,20 @@
+﻿using BCHGrpcService;
+using Grpc.Net.Client;
+using Xunit;
+
+namespace MFOTest.BCH
+{
+    public class gRPCTests
+    {
+        [Fact]
+        public async void MyTestMethod()
+        {
+            using var channel = GrpcChannel.ForAddress("https://localhost:5001");
+            var client = new BCHGrpc.BCHGrpcClient(channel);
+            var reply = await client.GetRatingByPassportAsync(
+                              new RatingRequest { PassportNumber = "1234 123456" });
+
+            Assert.Equal(76, reply.Rating);
+        }
+    }
+}
