@@ -1,4 +1,4 @@
-﻿namespace CreditConveyorGateWayAPI.DTO
+﻿namespace SharedLib.DTO
 {
     public class CreditParameters
     {

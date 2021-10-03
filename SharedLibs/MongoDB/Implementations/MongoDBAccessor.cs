@@ -1,12 +1,12 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
 
-using SharedLibs.MongoDB.Interfaces;
+using SharedLib.MongoDB.Interfaces;
 
 using System;
 using System.Collections.Generic;
 
-namespace SharedLibs.MongoDB.Implementations
+namespace SharedLib.MongoDB.Implementations
 {
     public class MongoDBAccessor<T> : IMongoDB<T>
     {

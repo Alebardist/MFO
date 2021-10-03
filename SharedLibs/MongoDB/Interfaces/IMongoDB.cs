@@ -2,7 +2,7 @@
 using MongoDB.Driver;
 using System.Collections.Generic;
 
-namespace SharedLibs.MongoDB.Interfaces
+namespace SharedLib.MongoDB.Interfaces
 {
     public interface IMongoDB<T>
     {

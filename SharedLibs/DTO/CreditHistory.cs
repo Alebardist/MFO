@@ -1,9 +1,9 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace MFOTest.DTOs
+namespace SharedLib.DTO
 {
-    internal class CreditHistoryDTO
+    public class CreditHistory
     {
         [BsonId]
         public ObjectId Id { get; set; }

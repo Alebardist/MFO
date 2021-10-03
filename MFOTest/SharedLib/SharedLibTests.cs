@@ -1,5 +1,5 @@
 ﻿using MFOTest.DTOs;
-using SharedLibs.MongoDB.Implementations;
+using SharedLib.MongoDB.Implementations;
 using System;
 using Xunit;
 using MongoDB.Driver;
@@ -9,14 +9,14 @@ namespace MFOTest.SharedLib
 {
     public class SharedLibTests
     {
-        private readonly IMongoCollection<CreditHistoryDTO> _mongoCollection = new MongoClient().GetDatabase("BCH")
-            .GetCollection<CreditHistoryDTO>("Credit_Histories");
-        private MongoDBAccessor<CreditHistoryDTO> _mongoDB = new("BCH", "Credit_Histories");
+        private readonly IMongoCollection<CreditHistory> _mongoCollection = new MongoClient().GetDatabase("BCH")
+            .GetCollection<CreditHistory>("Credit_Histories");
+        private MongoDBAccessor<CreditHistory> _mongoDB = new("BCH", "Credit_Histories");
 
         [Fact]
         public void ReadWithFilterMustReturnExpectedData()
         {
-            var expected = new CreditHistoryDTO()
+            var expected = new CreditHistory()
             {
                 Id = new ObjectId("615864fff04ef5ef9a003f1f"),
                 PassportNumber = "1234 123456",
@@ -25,7 +25,7 @@ namespace MFOTest.SharedLib
             };
             _mongoCollection.InsertOne(expected);
 
-            var operationResult = _mongoDB.ReadWithFilter(new FilterDefinitionBuilder<CreditHistoryDTO>().Eq(x => x.Id, new ObjectId("615864fff04ef5ef9a003f1f")));
+            var operationResult = _mongoDB.ReadWithFilter(new FilterDefinitionBuilder<CreditHistory>().Eq(x => x.Id, new ObjectId("615864fff04ef5ef9a003f1f")));
 
             var doc = operationResult.GetEnumerator();
             doc.MoveNext();
@@ -36,7 +36,7 @@ namespace MFOTest.SharedLib
         public void UpdateInformationMustChangeDocumentWithGivenIdToPassedDTO()
         {
             //Arrange
-            var dtoToUpdate = new CreditHistoryDTO()
+            var dtoToUpdate = new CreditHistory()
             {
                 Id = new ObjectId("615864fff04ef5ef9a003f1f"),
                 PassportNumber = "1234 123456",
@@ -46,14 +46,14 @@ namespace MFOTest.SharedLib
 
             _mongoCollection.InsertOne(dtoToUpdate);
 
-            var filter = new FilterDefinitionBuilder<CreditHistoryDTO>().Eq(x => x.Id, dtoToUpdate.Id);
-            var updateDefinition = new UpdateDefinitionBuilder<CreditHistoryDTO>().Set(dtoToUpdate => dtoToUpdate.Loans, new int[] { 1, 2, 3, 4 });
+            var filter = new FilterDefinitionBuilder<CreditHistory>().Eq(x => x.Id, dtoToUpdate.Id);
+            var updateDefinition = new UpdateDefinitionBuilder<CreditHistory>().Set(dtoToUpdate => dtoToUpdate.Loans, new int[] { 1, 2, 3, 4 });
 
             //Action
             _mongoDB.UpdateInformation(filter, updateDefinition);
 
             //Assert
-            CreditHistoryDTO extracted = _mongoCollection.Find(x => x.Id == dtoToUpdate.Id).First();
+            CreditHistory extracted = _mongoCollection.Find(x => x.Id == dtoToUpdate.Id).First();
             Assert.NotEqual(dtoToUpdate.Loans, extracted.Loans);
 
             //CleanUp
