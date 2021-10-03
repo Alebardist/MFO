@@ -1,4 +1,4 @@
-using CreditConveyorGateWayAPI.DTO;
+using SharedLib.DTO;
 
 using Newtonsoft.Json;
 

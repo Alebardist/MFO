@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using System;
 
 using Newtonsoft.Json;
-using CreditConveyorGateWayAPI.DTO;
+using SharedLib.DTO;
 using System.Diagnostics;
 
 namespace CreditConveyorGateWayAPI.Controllers
