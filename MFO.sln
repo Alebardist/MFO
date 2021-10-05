@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedLib", "SharedLibs\Sha
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculationLib", "CalculationLib\CalculationLib.csproj", "{555329D8-4566-44F0-B08A-037BDA8628E6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CashboxGrpcService", "CashboxGrpcService\CashboxGrpcService.csproj", "{90F4AC01-1AF3-4BAD-B331-44FBE8B0391C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{555329D8-4566-44F0-B08A-037BDA8628E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{555329D8-4566-44F0-B08A-037BDA8628E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{555329D8-4566-44F0-B08A-037BDA8628E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90F4AC01-1AF3-4BAD-B331-44FBE8B0391C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90F4AC01-1AF3-4BAD-B331-44FBE8B0391C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90F4AC01-1AF3-4BAD-B331-44FBE8B0391C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90F4AC01-1AF3-4BAD-B331-44FBE8B0391C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

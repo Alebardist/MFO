@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option csharp_namespace = "CashboxGrpcService";
+
+package CashboxGrpcService;
+
+service Cashbox{
+	rpc SendMoney (SendMoneyRequest) returns (SendMoneyReply);
+}
+
+message SendMoneyRequest{
+	string cardNumber = 1;
+}
+
+message SendMoneyReply{
+	//TODO: use enum? 
+	string operationResult = 1;
+}
