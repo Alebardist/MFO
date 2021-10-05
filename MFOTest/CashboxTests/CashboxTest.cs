@@ -15,15 +15,15 @@ namespace MFOTest.CashboxTests
         }
 
         [Fact]
-        public void MyTestMethod()
+        public void SendMoneyReplyMustBeOK()
         {
-            var expected = "OK";
+            var expected = SendMoneyReply.Types.operationResult.Ok;
             var request = new SendMoneyRequest()
             {
                 CardNumber = "1234 1234 1234 1234"
             };
 
-            var actual = _cashboxClient.SendMoney(request).OperationResult;
+            var actual = _cashboxClient.SendMoney(request).Result;
 
             Assert.Equal(expected, actual);
         }

@@ -11,7 +11,8 @@ namespace CashboxGrpcService.Services
 
             var reply = new SendMoneyReply()
             {
-                OperationResult = "OK"
+                ErrorMessage = "",
+                Result = SendMoneyReply.Types.operationResult.Ok
             };
 
             return Task.FromResult(reply);

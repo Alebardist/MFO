@@ -13,6 +13,10 @@ message SendMoneyRequest{
 }
 
 message SendMoneyReply{
-	//TODO: use enum? 
-	string operationResult = 1;
+	enum operationResult{
+		OK = 0;
+		ERROR = 1;
+	}
+	operationResult result = 1;
+	string errorMessage = 2;
 }
