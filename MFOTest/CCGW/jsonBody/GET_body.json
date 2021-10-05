@@ -1,0 +1,6 @@
+{
+  "MoneyToLoan": 1200,
+  "TermDays": 10,
+  "InterestRate": 3,
+  "PassportNumber": "1234 123456"
+}

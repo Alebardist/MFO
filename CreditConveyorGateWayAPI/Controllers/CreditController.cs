@@ -6,6 +6,7 @@ using System;
 using Newtonsoft.Json;
 using SharedLib.DTO;
 using System.Diagnostics;
+using CreditConveyorGateWayAPI.Logic;
 
 namespace CreditConveyorGateWayAPI.Controllers
 {
@@ -27,10 +28,12 @@ namespace CreditConveyorGateWayAPI.Controllers
         public IActionResult ApproveCredit([FromBody] object creditParameters)
         {
             JsonResult result = new JsonResult("");
-
+            
             try
             {
                 CreditParameters creditParametersDTO = JsonConvert.DeserializeObject<CreditParameters>(creditParameters.ToString());
+                int creditRating = new CreditConveyor().GetCreditRating(creditParametersDTO);
+                result = new JsonResult(creditRating);
             }
             catch (JsonReaderException ex)
             {
