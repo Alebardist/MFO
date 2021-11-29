@@ -1,12 +1,19 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
-using System;
+using CreditConveyorGateWayAPI.Logic;
+
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 
 using Newtonsoft.Json;
+
 using SharedLib.DTO;
-using System.Diagnostics;
-using CreditConveyorGateWayAPI.Logic;
 
 namespace CreditConveyorGateWayAPI.Controllers
 {
@@ -28,7 +35,7 @@ namespace CreditConveyorGateWayAPI.Controllers
         public IActionResult ApproveCredit([FromBody] object creditParameters)
         {
             JsonResult result = new JsonResult("");
-            
+
             try
             {
                 CreditParameters creditParametersDTO = JsonConvert.DeserializeObject<CreditParameters>(creditParameters.ToString());
@@ -52,5 +59,12 @@ namespace CreditConveyorGateWayAPI.Controllers
 
             return new JsonResult(result);
         }
+
+        [HttpGet]
+        public IActionResult GetToken()
+        {
+            return null;
+        }
+
     }
 }
