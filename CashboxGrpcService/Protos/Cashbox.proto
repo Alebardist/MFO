@@ -6,6 +6,7 @@ package CashboxGrpcService;
 
 service Cashbox{
 	rpc SendMoney (SendMoneyRequest) returns (SendMoneyReply);
+	rpc LogInService (LogInRequest) returns (LogInReply);
 }
 
 message SendMoneyRequest{
@@ -19,4 +20,19 @@ message SendMoneyReply{
 	}
 	operationResult result = 1;
 	string errorMessage = 2;
+}
+
+message LogInRequest{
+	string userName = 1;
+	string userPassword = 2;
+}
+
+message LogInReply{
+	enum loginResult{
+		SUCCESS = 0;
+		WRONG_userName_OR_userPassword = 1;
+	}
+
+	loginResult result = 1;
+	string token = 2;
 }
