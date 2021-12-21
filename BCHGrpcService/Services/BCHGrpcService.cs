@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 using CalculationLib;
 
@@ -41,9 +42,18 @@ namespace BCHGrpcService.Services
 
         public override Task<CreditHistoryReply> GetCreditHistory(CreditHistoryRequest request, ServerCallContext context)
         {
-            var creditHistories = MongoDBAccessor<Client>.GetMongoCollection("BCH", "Clients")
+            object creditHistories;
+            try
+            {
+                creditHistories = MongoDBAccessor<Client>.GetMongoCollection("BCH", "Clients")
                     .Find(x => x.Passport == request.PassportNumbers)
                     .First().CreditHistory;
+            }
+            catch (InvalidOperationException e)
+            {
+                //TODO: check if this works properly, when given not found passport
+                return Task.FromException<CreditHistoryReply>(e);
+            }
 
             var reply = new CreditHistoryReply() { CreditHistoryJSON = JsonConvert.SerializeObject(creditHistories) };
             

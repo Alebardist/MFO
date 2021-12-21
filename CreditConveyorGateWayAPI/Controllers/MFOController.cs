@@ -2,7 +2,11 @@
 using System.Diagnostics;
 using System.Linq;
 
+using BCHGrpcService;
+
 using GatewayAPI.Logic;
+
+using Grpc.Net.Client;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -112,7 +116,6 @@ namespace GatewayAPI.Controllers
         /// <returns>JsonResult</returns>
         [HttpGet]
         [Route("/CreditHistory")]
-        //[Route("[controller]/CreditsByPassport/{passportNumbers}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
@@ -124,10 +127,18 @@ namespace GatewayAPI.Controllers
 
             try
             {
-                //TODO: move this code to separate method (procedure in BCH service)
-                result = MongoDBAccessor<Client>.GetMongoCollection("BCH", "Clients")
-                    .Find(x => x.Passport == passport)
-                    .First().CreditHistory;
+                using var channel = GrpcChannel.ForAddress("https://localhost:5001");
+                var client = new BCHGrpc.BCHGrpcClient(channel);
+
+                var request = new CreditHistoryRequest()
+                {
+                    PassportNumbers = passport
+                };
+
+                result = client.GetCreditHistory(request).CreditHistoryJSON;
+
+                //TODO: process result when it contains Exception
+
                 statusCode = 200;
             }
             catch (InvalidOperationException e)
