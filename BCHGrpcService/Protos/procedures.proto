@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option csharp_namespace = "BCHGrpcService";
+
+package BCHgRPC;
+
+service BCHGrpc {
+	rpc GetRatingByPassport (RatingRequest) returns (RatingReply);
+	rpc GetCreditHistory (CreditHistoryRequest) returns (CreditHistoryReply);
+}
+
+message RatingRequest {
+	string passportNumber = 1;
+}
+
+message RatingReply {
+	int32 rating = 1;
+}
+
+message CreditHistoryRequest{
+	string passportNumbers = 1;
+}
+
+message CreditHistoryReply{
+	string CreditHistoryJSON = 1;
+}
