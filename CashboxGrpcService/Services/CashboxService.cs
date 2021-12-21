@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -32,11 +31,18 @@ namespace CashboxGrpcService.Services
             _configuration = configuration;
         }
 
+        /// <summary>
+        /// Log in service to get JWT. 
+        /// Docs https://datatracker.ietf.org/doc/html/rfc7519
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="context"></param>
+        /// <returns>Reply with operation result and JWT</returns>
         [AllowAnonymous]
         public override Task<LogInReply> LogInService(LogInRequest request, ServerCallContext context)
         {
             var reply = new LogInReply() { Result = LogInReply.Types.loginResult.WrongUserNameOrUserPassword };
-
+            
             if (CheckCredentialsCorrectness(request))
             {
                 var claims = new List<Claim>()
@@ -63,6 +69,7 @@ namespace CashboxGrpcService.Services
             return Task.FromResult(reply);
         }
 
+        //TODO: unimplemented
         [Authorize]
         public override Task<SendMoneyReply> SendMoney(SendMoneyRequest request, ServerCallContext context)
         {
@@ -70,10 +77,10 @@ namespace CashboxGrpcService.Services
             reply = new SendMoneyReply()
             {
                 ErrorMessage = $"",
-                Result = SendMoneyReply.Types.operationResult.Ok
+                Result = SendMoneyReply.Types.operationResult.Error
             };
 
-            return Task.FromResult(new SendMoneyReply());
+            return Task.FromResult(reply);
         }
 
         [Authorize]
@@ -97,9 +104,10 @@ namespace CashboxGrpcService.Services
             return MongoDBAccessor<UserCredentials>.GetMongoCollection(_configuration.GetSection("MongoDB:DBName").Value,
                                                         _configuration.GetSection("MongoDB:CollectionName").Value)
                                                         .Find(x => x.UserName == request.UserName
-                                                                        &&
-                                                                        x.UserPassword == passwordHash).Any();
+                                                                    &&
+                                                                   x.UserPassword == passwordHash).Any();
         }
+
         private void TranslateEnumerableToObjects(IEnumerable<Balance> balances, BalancesReply reply)
         {
             foreach (var obj in balances)
