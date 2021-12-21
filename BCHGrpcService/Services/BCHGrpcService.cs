@@ -1,10 +1,15 @@
-﻿using Grpc.Core;
+﻿using System.Threading.Tasks;
 
-using System.Threading.Tasks;
-using System;
+using CalculationLib;
 
-//using Serilog;
+using Grpc.Core;
+
 using Microsoft.Extensions.Logging;
+
+using MongoDB.Driver;
+
+using SharedLib.DTO;
+using SharedLib.MongoDB.Implementations;
 
 namespace BCHGrpcService.Services
 {
@@ -19,11 +24,18 @@ namespace BCHGrpcService.Services
 
         public override Task<RatingReply> GetRatingByPassport(RatingRequest request, ServerCallContext context)
         {
+            //TODO: (2)
+            //получение нужного клиента по паспорту
+            var clientCredits = MongoDBAccessor<Client>.
+                                GetMongoCollection("BCH", "Clients").
+                                Find(x => x.Passport == request.PassportNumber).
+                                First().CreditHistory;
+            //вычисление рейтинга по КИ полученного клиента
             var response = new RatingReply
             {
-                Rating = 76
+                Rating = CreditCalculations.GetCreditRating(clientCredits)
             };
-            
+
             return Task.FromResult(response);
         }
     }

@@ -23,11 +23,14 @@ namespace CashboxGrpcService
                 .AddJsonFile(@"S:\C#\Web\MFO\CashboxGrpcService\appsettings.json")
                 .Build();
             services.AddSingleton(typeof(IConfiguration), config);
+
+            //TODO: do this project needs to have CORS policy?
             //services.AddCors(options =>
             //{
             //    options.AddPolicy("CorsPolicy",
             //    builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials().Build());
             //});
+
             services.AddGrpc();
             services.AddAuthentication(
                 JwtBearerDefaults.AuthenticationScheme)

@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+
+using Google.Protobuf.WellKnownTypes;
 
 using Grpc.Core;
 
@@ -29,19 +32,6 @@ namespace CashboxGrpcService.Services
             _configuration = configuration;
         }
 
-        [Authorize]
-        public override Task<SendMoneyReply> SendMoney(SendMoneyRequest request, ServerCallContext context)
-        {
-            SendMoneyReply reply;
-            reply = new SendMoneyReply()
-            {
-                ErrorMessage = $"",
-                Result = SendMoneyReply.Types.operationResult.Ok
-            };
-
-            return Task.FromResult(new SendMoneyReply());
-        }
-
         [AllowAnonymous]
         public override Task<LogInReply> LogInService(LogInRequest request, ServerCallContext context)
         {
@@ -59,7 +49,7 @@ namespace CashboxGrpcService.Services
 
                 var key = new SymmetricSecurityKey(new ASCIIEncoding().GetBytes(_configuration.GetSection("key").Value));
                 var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-                var token = new JwtSecurityToken("issuer", "audience", claims, 
+                var token = new JwtSecurityToken("issuer", "audience", claims,
                     DateTime.Now,
                     DateTime.Now.AddMinutes(5),
                     cred
@@ -73,17 +63,55 @@ namespace CashboxGrpcService.Services
             return Task.FromResult(reply);
         }
 
+        [Authorize]
+        public override Task<SendMoneyReply> SendMoney(SendMoneyRequest request, ServerCallContext context)
+        {
+            SendMoneyReply reply;
+            reply = new SendMoneyReply()
+            {
+                ErrorMessage = $"",
+                Result = SendMoneyReply.Types.operationResult.Ok
+            };
+
+            return Task.FromResult(new SendMoneyReply());
+        }
+
+        [Authorize]
+        public override Task<BalancesReply> GetBalances(Empty request, ServerCallContext context)
+        {
+            var reply = new BalancesReply();
+
+            var balances = MongoDBAccessor<Balance>.GetMongoCollection(_configuration.GetSection("MongoDB:DBName").Value,
+                                                        "Balances")
+                                                        .Find(FilterDefinition<Balance>.Empty).ToEnumerable();
+
+            TranslateEnumerableToObjects(balances, reply);
+
+            return Task.FromResult(reply);
+        }
+
         private bool CheckCredentialsCorrectness(LogInRequest request)
         {
             byte[] passwordHash = SHA256.HashData(new ASCIIEncoding().GetBytes(request.UserPassword));
 
-            var filter = Builders<UserCredentials>.Filter.Where(x => x.UserName == request.UserName
-                                                                &&
-                                                                x.UserPassword == passwordHash);
-
-            return new MongoDBAccessor<UserCredentials>(_configuration.GetSection("MongoDB:DBName").Value,
+            return MongoDBAccessor<UserCredentials>.GetMongoCollection(_configuration.GetSection("MongoDB:DBName").Value,
                                                         _configuration.GetSection("MongoDB:CollectionName").Value)
-                                                        .ReadWithFilter(filter).Any();
+                                                        .Find(x => x.UserName == request.UserName
+                                                                        &&
+                                                                        x.UserPassword == passwordHash).Any();
+        }
+        private void TranslateEnumerableToObjects(IEnumerable<Balance> balances, BalancesReply reply)
+        {
+            foreach (var obj in balances)
+            {
+                var protoObj = new BalanceObject()
+                {
+                    Id = obj.Id.ToString(),
+                    Storage = obj.StorageName,
+                    Balance = (float)obj.Money
+                };
+                reply.Balances.Add(protoObj);
+            }
         }
     }
 }

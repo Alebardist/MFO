@@ -1,8 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
 
 using CashboxGrpcService;
 using Grpc.Core;
 using Grpc.Net.Client;
+
+using SharedLib.DTO;
+
 using Xunit;
 
 namespace MFOTest.CashboxTests
@@ -57,5 +61,13 @@ namespace MFOTest.CashboxTests
 
             Assert.Equal(expected, actual);
         }
+
+        [Fact]
+        public void GetBalancesMustReturnExpectedDictionary()
+        {
+            //TODO: end with this
+        }
+
+
     }
 }

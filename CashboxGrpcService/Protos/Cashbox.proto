@@ -1,25 +1,14 @@
 syntax = "proto3";
 
+import "google/protobuf/empty.proto";
 option csharp_namespace = "CashboxGrpcService";
 
 package CashboxGrpcService;
 
 service Cashbox{
-	rpc SendMoney (SendMoneyRequest) returns (SendMoneyReply);
 	rpc LogInService (LogInRequest) returns (LogInReply);
-}
-
-message SendMoneyRequest{
-	string cardNumber = 1;
-}
-
-message SendMoneyReply{
-	enum operationResult{
-		OK = 0;
-		ERROR = 1;
-	}
-	operationResult result = 1;
-	string errorMessage = 2;
+	rpc SendMoney (SendMoneyRequest) returns (SendMoneyReply);
+	rpc GetBalances (google.protobuf.Empty) returns (BalancesReply);
 }
 
 message LogInRequest{
@@ -35,4 +24,27 @@ message LogInReply{
 
 	loginResult result = 1;
 	string token = 2;
+}
+
+message SendMoneyRequest{
+	string cardNumber = 1;
+}
+
+message SendMoneyReply{
+	enum operationResult{
+		OK = 0;
+		ERROR = 1;
+	}
+	operationResult result = 1;
+	string errorMessage = 2;
+}
+
+message BalanceObject{
+	string id = 1;
+	string storage = 2;
+	float balance = 3;
+}
+
+message BalancesReply{
+	repeated BalanceObject balances = 1;
 }

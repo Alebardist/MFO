@@ -1,27 +1,43 @@
-﻿using CalculationLib;
+﻿using System.Linq;
+
+using CalculationLib;
+
 using MongoDB.Driver;
+
 using SharedLib.DTO;
-using System.Linq;
+using SharedLib.MongoDB.Implementations;
+
 using Xunit;
 
 namespace MFOTest.CalculationLib
 {
     public class CalculationLibTests
     {
-        private readonly IMongoCollection<CreditHistory> _mongoCollection = new MongoClient().GetDatabase("BCH")
-            .GetCollection<CreditHistory>("Credit_Histories");
-
         [Fact]
         public void GetCreditRatingMustReturnExpectedValue()
         {
-            var creditHistory = _mongoCollection.Find(x => x.Id == new MongoDB.Bson.ObjectId("6159f5c04fb6b04a8fa37180")).First();
-            var creditParameters = new CreditParameters()
-            {
-                MoneyToLoan = 4000
-            };
-            var actual = new CreditCalculations().GetCreditRating(creditHistory, creditParameters);
+            var expected = 25;
+            var creditHistories = MongoDBAccessor<Client>.
+                GetMongoCollection("BCH", "Clients").
+                Find(x => x.Passport == "1234 123456").First().CreditHistory;
 
-            Assert.Equal(100, actual);
+            var actual = CreditCalculations.GetCreditRating(creditHistories);
+
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void GetDebtMustReturnCorrectDebtOnCurrentDate()
+        {
+            var expected = 2000;
+            var creditHistoriy = MongoDBAccessor<Client>.
+                GetMongoCollection("BCH", "Clients").
+                Find(x => x.Passport == "1234 123456").
+                First().CreditHistory;
+
+            decimal actual = creditHistoriy.Where(x => x.IsPayed == false).Sum(x => x.Summ);
+
+            Assert.Equal(expected, actual);
         }
     }
 }

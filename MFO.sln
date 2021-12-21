@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31710.8
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CreditConveyorGateWayAPI", "CreditConveyorGateWayAPI\CreditConveyorGateWayAPI.csproj", "{97D12C37-A7BA-4F9E-B02B-8903657B8691}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GatewayAPI", "CreditConveyorGateWayAPI\GatewayAPI.csproj", "{97D12C37-A7BA-4F9E-B02B-8903657B8691}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MFOTest", "MFOTest\MFOTest.csproj", "{6D90DAEA-F94D-4BFD-86CB-22D65DA334AB}"
 EndProject
@@ -11,9 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BCHGrpcService", "BCHGrpcSe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedLib", "SharedLibs\SharedLib.csproj", "{086FDAB8-6706-46AA-BD9F-ECB5C7732345}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculationLib", "CalculationLib\CalculationLib.csproj", "{555329D8-4566-44F0-B08A-037BDA8628E6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculationLib", "CalculationLib\CalculationLib.csproj", "{555329D8-4566-44F0-B08A-037BDA8628E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CashboxGrpcService", "CashboxGrpcService\CashboxGrpcService.csproj", "{90F4AC01-1AF3-4BAD-B331-44FBE8B0391C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CashboxGrpcService", "CashboxGrpcService\CashboxGrpcService.csproj", "{90F4AC01-1AF3-4BAD-B331-44FBE8B0391C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
