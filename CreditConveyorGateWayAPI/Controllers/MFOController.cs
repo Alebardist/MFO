@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Linq;
 
 using BCHGrpcService;
-
-using GatewayAPI.Logic;
 
 using Grpc.Net.Client;
 
@@ -14,8 +11,6 @@ using Microsoft.Extensions.Logging;
 
 using MongoDB.Bson;
 using MongoDB.Driver;
-
-using Newtonsoft.Json;
 
 using SharedLib.DTO;
 using SharedLib.MongoDB.Implementations;
@@ -40,9 +35,9 @@ namespace GatewayAPI.Controllers
         [ProducesResponseType(200)]
         public IActionResult GetToken
         (
-            [FromHeader(Name = "Login")] 
-            string login, 
-            [FromHeader(Name = "Password")] 
+            [FromHeader(Name = "Login")]
+            string login,
+            [FromHeader(Name = "Password")]
             string password
         )
         {
@@ -70,11 +65,15 @@ namespace GatewayAPI.Controllers
             string passport
         )
         {
-            JsonResult result = new JsonResult("") { ContentType = "application/json" };
+            JsonResult result = new("") { ContentType = "application/json" };
 
             try
             {
-                int creditRating = CreditConveyor.GetCreditRating(passport);
+                var channel = GrpcChannel.ForAddress("https://localhost:5001");
+                var client = new BCHGrpc.BCHGrpcClient(channel);
+
+                int creditRating = client.GetRatingByPassport(new RatingRequest { PassportNumber = passport }).Rating;
+
                 result = new JsonResult(creditRating) { StatusCode = 200, ContentType = "application/json" };
             }
             catch (Exception ex)
@@ -90,6 +89,7 @@ namespace GatewayAPI.Controllers
 
         [HttpPut]
         [Route("/{creditNoteId}")]
+        [Consumes("application/json")]
         [ProducesResponseType(200)]
         [ProducesResponseType(401)]
         [ProducesResponseType(404)]
@@ -155,24 +155,16 @@ namespace GatewayAPI.Controllers
             return new JsonResult(result) { StatusCode = statusCode };
         }
 
+        //TODO: unimplemented
         [HttpGet]
-        [Route("/{creditNoteId}")]
+        [Route("/{debtId}")]
         [Produces("application/json")]
         [ProducesResponseType(200)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public JsonResult GetinformationByCreditId([FromRoute(Name = "creditNoteId")] string debtId)
+        public JsonResult GetinformationByDebtId([FromRoute(Name = "debtId")] string debtId)
         {
-            var info = new
-            {
-                Id = debtId,
-                Name = "Belov Yuriy Alexeevich",
-                creditSum = 6500,
-                DateTaken = new DateTime(2021, 3, 23),
-                Percent = 3.6m
-            };
-
-            return new JsonResult(JsonConvert.SerializeObject(info));
+            throw new NotImplementedException();
         }
 
         [HttpDelete]
@@ -180,17 +172,22 @@ namespace GatewayAPI.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public StatusCodeResult DeleteinformationByCreditId([FromRoute(Name = "debtId")] string debtId)
+        public StatusCodeResult DeleteDebtByDebtId([FromRoute(Name = "debtId")] string debtId)
         {
-            StatusCodeResult statusCode = new StatusCodeResult(500);
+            StatusCodeResult statusCode = new(500);
 
-            if (CreditConveyor.Delete(new ObjectId(debtId)) != null)
+            var result = MongoDBAccessor<Debt>.GetMongoCollection("MFO", "Debts").FindOneAndDelete(x => x.Id == new ObjectId(debtId));
+
+            if (result != null)
             {
                 statusCode = new StatusCodeResult(200);
             }
+            else
+            {
+                statusCode = new StatusCodeResult(404);
+            }
 
-            return new StatusCodeResult(200);
+            return statusCode;
         }
-
     }
 }
