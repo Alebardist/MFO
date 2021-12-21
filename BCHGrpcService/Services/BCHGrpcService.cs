@@ -8,6 +8,8 @@ using Microsoft.Extensions.Logging;
 
 using MongoDB.Driver;
 
+using Newtonsoft.Json;
+
 using SharedLib.DTO;
 using SharedLib.MongoDB.Implementations;
 
@@ -24,19 +26,28 @@ namespace BCHGrpcService.Services
 
         public override Task<RatingReply> GetRatingByPassport(RatingRequest request, ServerCallContext context)
         {
-            //TODO: (2)
-            //получение нужного клиента по паспорту
             var clientCredits = MongoDBAccessor<Client>.
                                 GetMongoCollection("BCH", "Clients").
                                 Find(x => x.Passport == request.PassportNumber).
                                 First().CreditHistory;
-            //вычисление рейтинга по КИ полученного клиента
+
             var response = new RatingReply
             {
                 Rating = CreditCalculations.GetCreditRating(clientCredits)
             };
 
             return Task.FromResult(response);
+        }
+
+        public override Task<CreditHistoryReply> GetCreditHistory(CreditHistoryRequest request, ServerCallContext context)
+        {
+            var creditHistories = MongoDBAccessor<Client>.GetMongoCollection("BCH", "Clients")
+                    .Find(x => x.Passport == request.PassportNumbers)
+                    .First().CreditHistory;
+
+            var reply = new CreditHistoryReply() { CreditHistoryJSON = JsonConvert.SerializeObject(creditHistories) };
+            
+            return Task.FromResult(reply);
         }
     }
 }
