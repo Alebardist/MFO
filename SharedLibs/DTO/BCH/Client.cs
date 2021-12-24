@@ -8,7 +8,8 @@ namespace SharedLib.DTO
     public class Client
     {
         [BsonId]
-        public ObjectId Id { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
         public string Passport { get; set; }
         public string FIO { get; set; }
         public IEnumerable<CreditHistory> CreditHistory { get; set; }
