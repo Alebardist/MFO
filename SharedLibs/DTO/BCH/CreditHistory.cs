@@ -8,8 +8,7 @@ namespace SharedLib.DTO
     public class CreditHistory
     {
         [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
+        public ObjectId Id { get; set; }
         public DateTime DateOfTake { get; set; }
         public decimal Summ { get; set; }
         public decimal Interest { get; set; }
