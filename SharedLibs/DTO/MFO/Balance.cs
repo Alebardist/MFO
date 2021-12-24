@@ -8,7 +8,9 @@ namespace SharedLib.DTO
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
+        [BsonRepresentation(BsonType.String)]
         public string StorageName { get; set; }
+        [BsonRepresentation(BsonType.Decimal128)]
         public decimal Money { get; set; }
     }
 }
