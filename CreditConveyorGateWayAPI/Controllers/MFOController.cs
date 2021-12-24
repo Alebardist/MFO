@@ -30,7 +30,7 @@ namespace GatewayAPI.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        [Route("/Token")]
+        [Route("/api/[Controller]/Token")]
         [Produces("application/json")]
         [ProducesResponseType(200)]
         public IActionResult GetToken
@@ -53,7 +53,7 @@ namespace GatewayAPI.Controllers
         /// </param>
         /// <returns></returns>
         [HttpGet]
-        [Route("/Rating")]
+        [Route("/api/[Controller]/Rating")]
         [Produces("application/json")]
         [ProducesDefaultResponseType(typeof(JsonResult))]
         [ProducesResponseType(200)]
@@ -88,7 +88,7 @@ namespace GatewayAPI.Controllers
         }
 
         [HttpPut]
-        [Route("/{creditNoteId}")]
+        [Route("/api/[Controller]/{creditNoteId}")]
         [Consumes("application/json")]
         [ProducesResponseType(200)]
         [ProducesResponseType(401)]
@@ -115,7 +115,7 @@ namespace GatewayAPI.Controllers
         /// <param name="passport"></param>
         /// <returns>JsonResult</returns>
         [HttpGet]
-        [Route("/CreditHistory")]
+        [Route("/api/[Controller]/CreditHistory")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
@@ -157,7 +157,7 @@ namespace GatewayAPI.Controllers
 
         //TODO: unimplemented
         [HttpGet]
-        [Route("/{debtId}")]
+        [Route("/api/[Controller]/{debtId}")]
         [Produces("application/json")]
         [ProducesResponseType(200)]
         [ProducesResponseType(403)]
@@ -168,7 +168,7 @@ namespace GatewayAPI.Controllers
         }
 
         [HttpDelete]
-        [Route("/{debtId}")]
+        [Route("/api/[Controller]/{debtId}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
