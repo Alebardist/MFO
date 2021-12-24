@@ -8,7 +8,8 @@ namespace SharedLib.DTO
     public class Debt
     {
         [BsonId]
-        public ObjectId Id { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
         public string Passport { get; set; }
         public decimal Loan { get; set; }
         public DateTime Issued { get; set; }
