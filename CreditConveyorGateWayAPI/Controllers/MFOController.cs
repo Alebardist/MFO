@@ -191,7 +191,7 @@ namespace GatewayAPI.Controllers
         {
             StatusCodeResult statusCode = new(500);
 
-            var result = MongoDBAccessor<Debt>.GetMongoCollection("MFO", "Debts").FindOneAndDelete(x => x.Id == new ObjectId(debtId));
+            var result = MongoDBAccessor<Debt>.GetMongoCollection("MFO", "Debts").FindOneAndDelete(x => x.Id == debtId);
 
             if (result != null)
             {

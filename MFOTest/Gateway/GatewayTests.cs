@@ -46,7 +46,7 @@ namespace MFOTest
         {
             Debt updatedDebt = new Debt() 
             { 
-                Id = new ObjectId("61a4fdf9c1c5a7d42fa0df8f"),
+                Id = "61a4fdf9c1c5a7d42fa0df8f",
                 Passport = "1234 123456",
                 Loan = 1200,
                 Issued = DateTime.Parse("2021-01-10T21:00:00.000+00:00"),
