@@ -12,6 +12,8 @@ using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
+using Newtonsoft.Json;
+
 using SharedLib.DTO;
 using SharedLib.MongoDB.Implementations;
 
@@ -97,15 +99,28 @@ namespace GatewayAPI.Controllers
         public IActionResult UpdateCreditInformation
         (
         [FromBody(EmptyBodyBehavior = Microsoft.AspNetCore.Mvc.ModelBinding.EmptyBodyBehavior.Disallow)]
-        object creditDTO
+        string debtDTO
         )
         {
-            //TODO: unimplemented
-            //Deserealize dto from body into 
+            StatusCodeResult result = new(404);
+
+            //Deserealize DTO from body into object
+            Debt updatedDebt = JsonConvert.DeserializeObject<Debt>(debtDTO);
             //find document by creditDTO.Id
             //Create UpdateDefinition fields with new DTO from body
-            throw new NotImplementedException();
-            //return new StatusCodeResult(200);
+            var filter = Builders<Debt>.Filter.Eq("_id", updatedDebt.Id);
+            var update = Builders<Debt>.Update.Set("Passport", updatedDebt.Passport).
+                                                        Set("Loan", updatedDebt.Loan).
+                                                        Set("Issued", updatedDebt.Issued).
+                                                        Set("OverdueInDays", updatedDebt.OverdueInDays).
+                                                        Set("Penalty", updatedDebt.Penalty).
+                                                        Set("Interest", updatedDebt.Interest);
+            if (MongoDBAccessor<Debt>.GetMongoCollection("MFO", "Debts").FindOneAndUpdate<Debt>(filter, update) != null)
+            {
+                result = new(200);
+            } 
+
+            return result;
         }
 
         //TODO: take PassportNUmbers from route, before this put together numbers in db
