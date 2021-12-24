@@ -10,7 +10,9 @@ namespace SharedLib.DTO
         [BsonId]
         public ObjectId Id { get; set; }
         public string Passport { get; set; }
+        [BsonRepresentation(BsonType.String)]
         public string FIO { get; set; }
+        [BsonRepresentation(BsonType.Array)]
         public IEnumerable<CreditHistory> CreditHistory { get; set; }
         public JobProperties JobProperties { get; set; }
     }
