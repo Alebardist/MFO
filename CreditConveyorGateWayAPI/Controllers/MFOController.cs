@@ -57,7 +57,6 @@ namespace GatewayAPI.Controllers
         [HttpGet]
         [Route("/api/[Controller]/Rating")]
         [Produces("application/json")]
-        [ProducesDefaultResponseType(typeof(JsonResult))]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
@@ -67,7 +66,7 @@ namespace GatewayAPI.Controllers
             string passport
         )
         {
-            JsonResult result = new("") { ContentType = "application/json" };
+            IActionResult result;
 
             try
             {
@@ -76,17 +75,14 @@ namespace GatewayAPI.Controllers
 
                 int creditRating = client.GetRatingByPassport(new RatingRequest { PassportNumber = passport }).Rating;
 
-                result = new JsonResult(creditRating) { StatusCode = 200, ContentType = "application/json" };
+                result = Ok(creditRating);
             }
             catch (Exception ex)
             {
-                result.Value = ex.Message;
-                result.StatusCode = 500;
-
-                Debug.WriteLine(ex.Message);
+                result = Problem(ex.Message, statusCode: 500);
             }
 
-            return new JsonResult(result);
+            return result;
         }
 
         [HttpPut]
@@ -99,26 +95,42 @@ namespace GatewayAPI.Controllers
         public IActionResult UpdateCreditInformation
         (
         [FromBody(EmptyBodyBehavior = Microsoft.AspNetCore.Mvc.ModelBinding.EmptyBodyBehavior.Disallow)]
-        string debtDTO
+        Debt debtDTO,
+        [FromRoute(Name = "creditNoteId")]
+        string creditNoteId
         )
         {
-            StatusCodeResult result = new(404);
+            IActionResult result;
 
-            //Deserealize DTO from body into object
-            Debt updatedDebt = JsonConvert.DeserializeObject<Debt>(debtDTO);
-            //find document by creditDTO.Id
-            //Create UpdateDefinition fields with new DTO from body
-            var filter = Builders<Debt>.Filter.Eq("_id", updatedDebt.Id);
+            Debt updatedDebt = debtDTO;
+
+            //TODO: replace this with different update way, because now it inserts string types instead of types specified in DTO
             var update = Builders<Debt>.Update.Set("Passport", updatedDebt.Passport).
-                                                        Set("Loan", updatedDebt.Loan).
-                                                        Set("Issued", updatedDebt.Issued).
-                                                        Set("OverdueInDays", updatedDebt.OverdueInDays).
-                                                        Set("Penalty", updatedDebt.Penalty).
-                                                        Set("Interest", updatedDebt.Interest);
-            if (MongoDBAccessor<Debt>.GetMongoCollection("MFO", "Debts").FindOneAndUpdate<Debt>(filter, update) != null)
+                                                Set("Loan", updatedDebt.Loan).
+                                                Set("Issued", updatedDebt.Issued).
+                                                Set("OverdueInDays", updatedDebt.OverdueInDays).
+                                                Set("Penalty", updatedDebt.Penalty).
+                                                Set("Interest", updatedDebt.Interest);
+            try
             {
-                result = new(200);
-            } 
+                UpdateResult updateResult = MongoDBAccessor<Debt>.
+                    GetMongoCollection("MFO", "Debts").
+                    UpdateOne(x => x.Id == ObjectId.Parse(creditNoteId), update);
+
+                if (updateResult.ModifiedCount == 1)
+                {
+                    result = Ok();
+                }
+                else
+                {
+                    result = NotFound(creditNoteId);
+                }
+            }
+            catch (Exception e)
+            {
+                result = Problem(e.Message, statusCode: 500);
+                //TODO: logging
+            }
 
             return result;
         }
@@ -128,17 +140,16 @@ namespace GatewayAPI.Controllers
         /// Returns CreditHistory by passport from BCH db
         /// </summary>
         /// <param name="passport"></param>
-        /// <returns>JsonResult</returns>
+        /// <returns>Json</returns>
         [HttpGet]
         [Route("/api/[Controller]/CreditHistory")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         [Produces("application/json")]
-        public JsonResult GetCreditHistoryByPassport([FromHeader(Name = "PassportNumbers")] string passport)
+        public IActionResult GetCreditHistoryByPassport([FromHeader(Name = "PassportNumbers")] string passport)
         {
-            object result = new ObjectResult("");
-            int statusCode = 200;
+            IActionResult result;
 
             try
             {
@@ -150,24 +161,16 @@ namespace GatewayAPI.Controllers
                     PassportNumbers = passport
                 };
 
-                result = client.GetCreditHistory(request).CreditHistoryJSON;
+                result = Ok(client.GetCreditHistory(request).CreditHistoryJSON);
 
                 //TODO: process result when it contains Exception
-
-                statusCode = 200;
-            }
-            catch (InvalidOperationException e)
-            {
-                statusCode = 404;
-                result = e.Message + $" {passport}";
             }
             catch (Exception e)
             {
-                statusCode = 500;
-                result = $"Internal server error " + e.Message;
+                result = Problem(e.Message);
             }
 
-            return new JsonResult(result) { StatusCode = statusCode };
+            return result;
         }
 
         //TODO: unimplemented
@@ -177,7 +180,7 @@ namespace GatewayAPI.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public JsonResult GetinformationByDebtId([FromRoute(Name = "debtId")] string debtId)
+        public IActionResult GetinformationByDebtId([FromRoute(Name = "debtId")] string debtId)
         {
             throw new NotImplementedException();
         }
@@ -187,22 +190,21 @@ namespace GatewayAPI.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public StatusCodeResult DeleteDebtByDebtId([FromRoute(Name = "debtId")] string debtId)
+        public IActionResult DeleteDebtByDebtId([FromRoute(Name = "debtId")] string debtId)
         {
-            StatusCodeResult statusCode = new(500);
+            IActionResult result;
+            var deletionResult = MongoDBAccessor<Debt>.GetMongoCollection("MFO", "Debts").DeleteOne(x => x.Id == new ObjectId(debtId));
 
-            var result = MongoDBAccessor<Debt>.GetMongoCollection("MFO", "Debts").FindOneAndDelete(x => x.Id == debtId);
-
-            if (result != null)
+            if (deletionResult.DeletedCount == 1)
             {
-                statusCode = new StatusCodeResult(200);
+                result = Ok();
             }
             else
             {
-                statusCode = new StatusCodeResult(404);
+                result = NotFound(debtId);
             }
 
-            return statusCode;
+            return result;
         }
     }
 }

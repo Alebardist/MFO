@@ -9,7 +9,7 @@ using SharedLib.DTO;
 
 using Xunit;
 
-namespace MFOTest.CashboxTests
+namespace MFOTests.CashboxTests
 {
     public class CashboxTest
     {

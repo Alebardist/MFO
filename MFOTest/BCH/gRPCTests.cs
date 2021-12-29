@@ -2,7 +2,7 @@
 using Grpc.Net.Client;
 using Xunit;
 
-namespace MFOTest.BCH
+namespace MFOTests.BCH
 {
     public class gRPCTests
     {
@@ -18,7 +18,7 @@ namespace MFOTest.BCH
                                   PassportNumber = "1234 123456" 
                               });
 
-            Assert.Equal(76, reply.Rating);
+            Assert.Equal(25, reply.Rating);
         }
     }
 }
