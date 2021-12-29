@@ -95,27 +95,20 @@ namespace GatewayAPI.Controllers
         public IActionResult UpdateCreditInformation
         (
         [FromBody(EmptyBodyBehavior = Microsoft.AspNetCore.Mvc.ModelBinding.EmptyBodyBehavior.Disallow)]
-        Debt debtDTO,
+        Debt updatedDebt,
         [FromRoute(Name = "creditNoteId")]
         string creditNoteId
         )
         {
             IActionResult result;
 
-            Debt updatedDebt = debtDTO;
-
-            //TODO: replace this with different update way, because now it inserts string types instead of types specified in DTO
-            var update = Builders<Debt>.Update.Set("Passport", updatedDebt.Passport).
-                                                Set("Loan", updatedDebt.Loan).
-                                                Set("Issued", updatedDebt.Issued).
-                                                Set("OverdueInDays", updatedDebt.OverdueInDays).
-                                                Set("Penalty", updatedDebt.Penalty).
-                                                Set("Interest", updatedDebt.Interest);
             try
             {
-                UpdateResult updateResult = MongoDBAccessor<Debt>.
+                updatedDebt.Id = ObjectId.Parse(creditNoteId);
+
+                var updateResult = MongoDBAccessor<Debt>.
                     GetMongoCollection("MFO", "Debts").
-                    UpdateOne(x => x.Id == ObjectId.Parse(creditNoteId), update);
+                    ReplaceOne(x => x.Id == ObjectId.Parse(creditNoteId), updatedDebt);
 
                 if (updateResult.ModifiedCount == 1)
                 {

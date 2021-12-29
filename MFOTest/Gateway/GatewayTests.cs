@@ -45,17 +45,19 @@ namespace MFOTests
         [Fact]
         public void UpdateCreditInformationMustUpdateObjectInDBCorrectly()
         {
+            string objectId = "61c8b11846629713beada50c";
+
             Debt updatedDebt = new Debt() 
             { 
                 Passport = "1234 123456",
                 Loan = 320,
                 Issued = DateTime.Parse("2021-01-10T21:00:00.000+00:00"),
-                OverdueInDays = 1,
-                Penalty = 100,
+                OverdueInDays = 10,
+                Penalty = new Random().Next(),
                 Interest = 3
             };
 
-            using (var request = new HttpRequestMessage(HttpMethod.Put, $"{_httpClient.BaseAddress}/61a4fdf9c1c5a7d42fa0df8f"))
+            using (var request = new HttpRequestMessage(HttpMethod.Put, $"{_httpClient.BaseAddress}/{objectId}"))
             {
                 var jsonContent = JsonContent.Create(updatedDebt, mediaType: new System.Net.Http.Headers.MediaTypeHeaderValue("application/json"));
 
@@ -65,13 +67,12 @@ namespace MFOTests
             
             var debtFromDB = MongoDBAccessor<Debt>.
                 GetMongoCollection("MFO", "Debts").
-                Find(x => x.Id == ObjectId.Parse("61a4fdf9c1c5a7d42fa0df8f")).
+                Find(x => x.Id == ObjectId.Parse(objectId)).
                 First();
 
             Assert.Equal(updatedDebt.Penalty, debtFromDB.Penalty);
         }
 
-        //TODO: check this test
         [Fact]
         public void GetCreditHistoryByPassportMustReturnObjectOfCreditHistoryWithExpectedId()
         {
