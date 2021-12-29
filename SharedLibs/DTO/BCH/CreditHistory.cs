@@ -9,6 +9,7 @@ namespace SharedLib.DTO
     {
         [BsonId]
         public ObjectId Id { get; set; }
+        [BsonRepresentation(BsonType.DateTime)]
         public DateTime DateOfTake { get; set; }
         [BsonRepresentation(BsonType.Decimal128)]
         public decimal Summ { get; set; }
