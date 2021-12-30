@@ -8,6 +8,7 @@ using Grpc.Net.Client;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 using MongoDB.Bson;
@@ -25,10 +26,11 @@ namespace GatewayAPI.Controllers
     public class MFOController : ControllerBase
     {
         private readonly ILogger<MFOController> _logger;
-
-        public MFOController(ILogger<MFOController> logger)
+        private readonly IConfiguration _configuration;
+        public MFOController(ILogger<MFOController> logger, IConfiguration configuration)
         {
             _logger = logger;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -108,7 +110,8 @@ namespace GatewayAPI.Controllers
                 updatedDebt.Id = ObjectId.Parse(creditNoteId);
 
                 var updateResult = MongoDBAccessor<Debt>.
-                    GetMongoCollection("MFO", "Debts").
+                    GetMongoCollection(_configuration.GetSection("MongoDB:DBName").Value, 
+                                        _configuration.GetSection("MongoDB:CollectionName").Value).
                     ReplaceOne(x => x.Id == ObjectId.Parse(creditNoteId), updatedDebt);
 
                 if (updateResult.ModifiedCount == 1)
@@ -186,8 +189,10 @@ namespace GatewayAPI.Controllers
 
             try
             {
-                //TODO: use names from config
-                var result = MongoDBAccessor<Debt>.GetMongoCollection("MFO", "Debts").Find(x => x.Id == ObjectId.Parse(debtId)).First();
+                var result = MongoDBAccessor<Debt>.
+                    GetMongoCollection(_configuration.GetSection("MongoDB:DBName").Value,
+                                        _configuration.GetSection("MongoDB:CollectionName").Value).
+                                        Find(x => x.Id == ObjectId.Parse(debtId)).First();
                 reply = Ok(result);
             }
             catch (InvalidOperationException e)
@@ -210,7 +215,10 @@ namespace GatewayAPI.Controllers
         public IActionResult DeleteDebtByDebtId([FromRoute(Name = "debtId")] string debtId)
         {
             IActionResult result;
-            var deletionResult = MongoDBAccessor<Debt>.GetMongoCollection("MFO", "Debts").DeleteOne(x => x.Id == new ObjectId(debtId));
+            var deletionResult = MongoDBAccessor<Debt>.
+                GetMongoCollection(_configuration.GetSection("MongoDB:DBName").Value,
+                                    _configuration.GetSection("MongoDB:CollectionName").Value).
+                                    DeleteOne(x => x.Id == new ObjectId(debtId));
 
             if (deletionResult.DeletedCount == 1)
             {

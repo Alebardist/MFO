@@ -5,6 +5,7 @@ using CalculationLib;
 
 using Grpc.Core;
 
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 using MongoDB.Driver;
@@ -19,16 +20,19 @@ namespace BCHGrpcService.Services
     public class BCHGrpcService : BCHGrpc.BCHGrpcBase
     {
         private readonly ILogger<BCHGrpcService> _logger;
+        private readonly IConfiguration _configuration;
 
-        public BCHGrpcService(ILogger<BCHGrpcService> logger)
+        public BCHGrpcService(ILogger<BCHGrpcService> logger, IConfiguration configuration)
         {
             _logger = logger;
+            _configuration = configuration;
         }
 
         public override Task<RatingReply> GetRatingByPassport(RatingRequest request, ServerCallContext context)
         {
             var clientCredits = MongoDBAccessor<Client>.
-                                GetMongoCollection("BCH", "Clients").
+                                GetMongoCollection(_configuration.GetSection("MongoDB:DBName").Value,
+                                                    _configuration.GetSection("MongoDB:CollectionName").Value).
                                 Find(x => x.Passport == request.PassportNumber).
                                 First().CreditHistory;
 
@@ -45,9 +49,11 @@ namespace BCHGrpcService.Services
             object creditHistories;
             try
             {
-                creditHistories = MongoDBAccessor<Client>.GetMongoCollection("BCH", "Clients")
-                    .Find(x => x.Passport == request.PassportNumbers)
-                    .First().CreditHistory;
+                creditHistories = MongoDBAccessor<Client>.
+                    GetMongoCollection(_configuration.GetSection("MongoDB:DBName").Value,
+                                        _configuration.GetSection("MongoDB:CollectionName").Value).
+                    Find(x => x.Passport == request.PassportNumbers).
+                    First().CreditHistory;
             }
             catch (InvalidOperationException e)
             {
