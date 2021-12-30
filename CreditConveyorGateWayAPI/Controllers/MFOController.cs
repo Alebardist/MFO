@@ -3,6 +3,7 @@ using System.Diagnostics;
 
 using BCHGrpcService;
 
+using Grpc.Core;
 using Grpc.Net.Client;
 
 using Microsoft.AspNetCore.Authorization;
@@ -153,10 +154,16 @@ namespace GatewayAPI.Controllers
                 {
                     PassportNumbers = passport
                 };
-
-                result = Ok(client.GetCreditHistory(request).CreditHistoryJSON);
-
-                //TODO: process result when it contains Exception
+                
+                result = Ok(client.GetCreditHistory(request));
+            }
+            catch (RpcException e) when (e.StatusCode == Grpc.Core.StatusCode.NotFound)
+            {
+                result = NotFound($"{passport} not found");
+            }
+            catch (RpcException e)
+            {
+                result = Problem($"{Grpc.Core.StatusCode.NotFound}, {e.Message}");
             }
             catch (Exception e)
             {
@@ -175,7 +182,23 @@ namespace GatewayAPI.Controllers
         [ProducesResponseType(404)]
         public IActionResult GetinformationByDebtId([FromRoute(Name = "debtId")] string debtId)
         {
-            throw new NotImplementedException();
+            ObjectResult reply;
+
+            try
+            {
+                var result = MongoDBAccessor<Debt>.GetMongoCollection("MFO", "Debt").Find(x => x.Id == ObjectId.Parse(debtId)).First();
+                reply = Ok(result);
+            }
+            catch (InvalidOperationException e)
+            {
+                reply = NotFound($"{debtId} not exists");
+            }
+            catch (Exception e)
+            {
+                reply = Problem(e.Message, statusCode: 500);
+            }
+
+            return reply;
         }
 
         [HttpDelete]

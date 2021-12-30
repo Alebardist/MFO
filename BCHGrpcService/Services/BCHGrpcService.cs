@@ -51,8 +51,11 @@ namespace BCHGrpcService.Services
             }
             catch (InvalidOperationException e)
             {
-                //TODO: check if this works properly, when given not found passport
-                return Task.FromException<CreditHistoryReply>(e);
+                throw new RpcException(new Status(StatusCode.NotFound, request.PassportNumbers));
+            }
+            catch(Exception e)
+            {
+                throw new RpcException(new Status(StatusCode.Internal, $"Internal error: {e.Message}"));
             }
 
             var reply = new CreditHistoryReply() { CreditHistoryJSON = JsonConvert.SerializeObject(creditHistories) };
