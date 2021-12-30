@@ -86,5 +86,17 @@ namespace MFOTests
 
             Assert.Contains("61bb03975864f85c6b9eb53f", result);
         }
+
+        [Fact]
+        public void GetinformationByDebtIdMustReturnExpectedObject()
+        {
+            var expected = MongoDBAccessor<Debt>.GetMongoCollection("MFO", "Debts").Find(x => x.Id == ObjectId.Parse("61c8b11846629713beada50c")).First();
+
+            var reply = _httpClient.GetAsync($"{_httpClient.BaseAddress}/{expected.Id}").Result;
+            var actual = reply.Content.ReadFromJsonAsync<Debt>().Result;
+
+            Assert.Equal(expected.Penalty, actual.Penalty);
+        }
+
     }
 }

@@ -186,7 +186,8 @@ namespace GatewayAPI.Controllers
 
             try
             {
-                var result = MongoDBAccessor<Debt>.GetMongoCollection("MFO", "Debt").Find(x => x.Id == ObjectId.Parse(debtId)).First();
+                //TODO: use names from config
+                var result = MongoDBAccessor<Debt>.GetMongoCollection("MFO", "Debts").Find(x => x.Id == ObjectId.Parse(debtId)).First();
                 reply = Ok(result);
             }
             catch (InvalidOperationException e)
