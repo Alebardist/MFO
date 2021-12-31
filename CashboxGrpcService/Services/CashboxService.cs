@@ -58,14 +58,14 @@ namespace CashboxGrpcService.Services
                 var token = new JwtSecurityToken("issuer", "audience", claims,
                     DateTime.Now,
                     DateTime.Now.AddMinutes(5),
-                    cred
-                    );
+                    cred);
 
                 reply.Token = new JwtSecurityTokenHandler().WriteToken(token);
                 reply.Result = LogInReply.Types.loginResult.Success;
             }
 
             Console.WriteLine(reply.Token);
+
             return Task.FromResult(reply);
         }
 
@@ -89,8 +89,8 @@ namespace CashboxGrpcService.Services
             var reply = new BalancesReply();
 
             var balances = MongoDBAccessor<Balance>.GetMongoCollection(_configuration.GetSection("MongoDB:DBName").Value,
-                                                        "Balances")
-                                                        .Find(FilterDefinition<Balance>.Empty).ToEnumerable();
+                                                        "Balances").
+                                                        Find(FilterDefinition<Balance>.Empty).ToEnumerable();
 
             TranslateEnumerableToObjects(balances, reply);
 
@@ -102,8 +102,8 @@ namespace CashboxGrpcService.Services
             byte[] passwordHash = SHA256.HashData(new ASCIIEncoding().GetBytes(request.UserPassword));
 
             return MongoDBAccessor<UserCredentials>.GetMongoCollection(_configuration.GetSection("MongoDB:DBName").Value,
-                                                        _configuration.GetSection("MongoDB:CollectionName").Value)
-                                                        .Find(x => x.UserName == request.UserName
+                                                        _configuration.GetSection("MongoDB:CollectionName").Value).
+                                                        Find(x => x.UserName == request.UserName
                                                                     &&
                                                                    x.UserPassword == passwordHash).Any();
         }
