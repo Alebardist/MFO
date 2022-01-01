@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 
 using CashboxGrpcService;
+
+using Google.Protobuf.WellKnownTypes;
+
 using Grpc.Core;
 using Grpc.Net.Client;
 
@@ -25,7 +28,7 @@ namespace MFOTests.CashboxTests
         [Fact]
         public void LogInServiceMustReturnError()
         {
-            var expected = LogInReply.Types.loginResult.WrongUserNameOrUserPassword;
+            var expected = LogInReply.Types.loginResult.WrongUserNameOrPassword;
             
             var request = new LogInRequest() { UserName = "admin", UserPassword = "wrong pass" };
             var actual = _cashboxClient.LogInService(request).Result;
@@ -63,11 +66,17 @@ namespace MFOTests.CashboxTests
         }
 
         [Fact]
-        public void GetBalancesMustReturnExpectedDictionary()
+        public void GetBalancesMustReturnExpectedBalancesReply()
         {
-            //TODO: end with this
+            var requestToLogin = new LogInRequest() { UserName = "admin", UserPassword = "adminPass" };
+            var token = _cashboxClient.LogInService(requestToLogin).Token;
+
+            Metadata headers = new Metadata();
+            headers.Add("Authorization", $"Bearer {token}");
+
+            var actual = _cashboxClient.GetBalances(new Empty(), headers);
+
+            Assert.NotEmpty(actual.Balances);
         }
-
-
     }
 }

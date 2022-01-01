@@ -19,7 +19,7 @@ message LogInRequest{
 message LogInReply{
 	enum loginResult{
 		SUCCESS = 0;
-		WRONG_userName_OR_userPassword = 1;
+		Wrong_userName_or_password = 1;
 	}
 
 	loginResult result = 1;

@@ -41,7 +41,7 @@ namespace CashboxGrpcService.Services
         [AllowAnonymous]
         public override Task<LogInReply> LogInService(LogInRequest request, ServerCallContext context)
         {
-            var reply = new LogInReply() { Result = LogInReply.Types.loginResult.WrongUserNameOrUserPassword };
+            var reply = new LogInReply() { Result = LogInReply.Types.loginResult.WrongUserNameOrPassword };
             
             if (CheckCredentialsCorrectness(request))
             {
@@ -55,7 +55,7 @@ namespace CashboxGrpcService.Services
 
                 var key = new SymmetricSecurityKey(new ASCIIEncoding().GetBytes(_configuration.GetSection("key").Value));
                 var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-                var token = new JwtSecurityToken("issuer", "audience", claims,
+                var token = new JwtSecurityToken(request.UserName, "admins", claims,
                     DateTime.Now,
                     DateTime.Now.AddMinutes(5),
                     cred);
@@ -86,13 +86,13 @@ namespace CashboxGrpcService.Services
         [Authorize]
         public override Task<BalancesReply> GetBalances(Empty request, ServerCallContext context)
         {
-            var reply = new BalancesReply();
+            BalancesReply reply;
 
-            var balances = MongoDBAccessor<Balance>.GetMongoCollection(_configuration.GetSection("MongoDB:DBName").Value,
-                                                        "Balances").
-                                                        Find(FilterDefinition<Balance>.Empty).ToEnumerable();
-
-            TranslateEnumerableToObjects(balances, reply);
+            var balances = MongoDBAccessor<Balance>.
+                GetMongoCollection(_configuration.GetSection("MongoDB:DBName").Value,
+                                    _configuration.GetSection("MongoDB:BalancesCollectionName").Value).
+                Find(FilterDefinition<Balance>.Empty).ToEnumerable();
+            TranslateEnumerableToObjects(balances, out reply);
 
             return Task.FromResult(reply);
         }
@@ -101,15 +101,18 @@ namespace CashboxGrpcService.Services
         {
             byte[] passwordHash = SHA256.HashData(new ASCIIEncoding().GetBytes(request.UserPassword));
 
-            return MongoDBAccessor<UserCredentials>.GetMongoCollection(_configuration.GetSection("MongoDB:DBName").Value,
-                                                        _configuration.GetSection("MongoDB:CollectionName").Value).
-                                                        Find(x => x.UserName == request.UserName
-                                                                    &&
-                                                                   x.UserPassword == passwordHash).Any();
+            return MongoDBAccessor<UserCredentials>.
+                GetMongoCollection(_configuration.GetSection("MongoDB:DBName").Value,
+                                   _configuration.GetSection("MongoDB:CollectionName").Value).
+                                   Find(x => x.UserName == request.UserName
+                                        &&
+                                        x.UserPassword == passwordHash).Any();
         }
 
-        private void TranslateEnumerableToObjects(IEnumerable<Balance> balances, BalancesReply reply)
+        private void TranslateEnumerableToObjects(IEnumerable<Balance> balances, out BalancesReply reply)
         {
+            reply = new BalancesReply();
+
             foreach (var obj in balances)
             {
                 var protoObj = new BalanceObject()
