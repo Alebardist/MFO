@@ -32,8 +32,7 @@ namespace CashboxGrpcService.Services
         }
 
         /// <summary>
-        /// Log in service to get JWT. 
-        /// Docs https://datatracker.ietf.org/doc/html/rfc7519
+        /// Log in service to get JWT.
         /// </summary>
         /// <param name="request"></param>
         /// <param name="context"></param>
@@ -42,24 +41,26 @@ namespace CashboxGrpcService.Services
         public override Task<LogInReply> LogInService(LogInRequest request, ServerCallContext context)
         {
             var reply = new LogInReply() { Result = LogInReply.Types.loginResult.WrongUserNameOrPassword };
-            
-            if (CheckCredentialsCorrectness(request))
+
+            if (CheckCredentialsCorrectness(request, out UserCredentials credentials))
             {
+                string role = credentials.Role;
+
                 var claims = new List<Claim>()
                 {
                 new Claim(ClaimTypes.Actor, request.UserName),
                 new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.Role, "admin")
+                new Claim(ClaimTypes.Role, role)
                 };
 
                 var key = new SymmetricSecurityKey(new ASCIIEncoding().GetBytes(_configuration.GetSection("JWT:key").Value));
-                var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
                 var token = new JwtSecurityToken(issuer: _configuration.GetSection("JWT:validIssuer").Value,
                                                 audience: _configuration.GetSection("JWT:validAudience").Value,
                                                 claims,
                                                 DateTime.Now,
                                                 DateTime.Now.AddMinutes(5),
-                                                credentials);
+                                                signingCredentials);
 
                 reply.Token = new JwtSecurityTokenHandler().WriteToken(token);
                 reply.Result = LogInReply.Types.loginResult.Success;
@@ -74,10 +75,9 @@ namespace CashboxGrpcService.Services
         [Authorize]
         public override Task<SendMoneyReply> SendMoney(SendMoneyRequest request, ServerCallContext context)
         {
-            SendMoneyReply reply;
-            reply = new SendMoneyReply()
+            SendMoneyReply reply = new()
             {
-                ErrorMessage = $"",
+                ErrorMessage = "",
                 Result = SendMoneyReply.Types.operationResult.Error
             };
 
@@ -87,27 +87,37 @@ namespace CashboxGrpcService.Services
         [Authorize]
         public override Task<BalancesReply> GetBalances(Empty request, ServerCallContext context)
         {
-            BalancesReply reply;
-
             var balances = MongoDBAccessor<Balance>.
                 GetMongoCollection(_configuration.GetSection("MongoDB:DBName").Value,
                                     _configuration.GetSection("MongoDB:BalancesCollectionName").Value).
                 Find(FilterDefinition<Balance>.Empty).ToEnumerable();
-            TranslateEnumerableToObjects(balances, out reply);
+            TranslateEnumerableToObjects(balances, out BalancesReply reply);
 
             return Task.FromResult(reply);
         }
 
-        private bool CheckCredentialsCorrectness(LogInRequest request)
+        private bool CheckCredentialsCorrectness(LogInRequest request, out UserCredentials checkedCredentials)
         {
+            checkedCredentials = null;
+
             byte[] passwordHash = SHA256.HashData(new ASCIIEncoding().GetBytes(request.UserPassword));
 
-            return MongoDBAccessor<UserCredentials>.
+            try
+            {
+                checkedCredentials = MongoDBAccessor<UserCredentials>.
                 GetMongoCollection(_configuration.GetSection("MongoDB:DBName").Value,
                                    _configuration.GetSection("MongoDB:CollectionName").Value).
                                    Find(x => x.UserName == request.UserName
                                         &&
-                                        x.UserPassword == passwordHash).Any();
+                                        x.UserPassword == passwordHash).First();
+            }
+            catch (InvalidOperationException e)
+            {
+                Console.WriteLine($"Credentials not found {e.Message}");
+                return false;
+            }
+
+            return true;
         }
 
         private void TranslateEnumerableToObjects(IEnumerable<Balance> balances, out BalancesReply reply)
