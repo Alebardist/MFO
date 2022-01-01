@@ -38,10 +38,12 @@ namespace CashboxGrpcService
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(config.GetSection("key").Value)),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    ValidateLifetime = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(config.GetSection("JWT:key").Value)),
+                    ValidateIssuer = true,
+                    ValidIssuer = config.GetSection("JWT:validIssuer").Value,
+                    ValidateAudience = true,
+                    ValidAudience = config.GetSection("JWT:validAudience").Value,
+                    ValidateLifetime = true
                 }
                 );
             services.AddAuthorization();

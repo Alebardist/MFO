@@ -47,18 +47,19 @@ namespace CashboxGrpcService.Services
             {
                 var claims = new List<Claim>()
                 {
-                new Claim(JwtRegisteredClaimNames.Sub, request.UserName),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Nbf, new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds().ToString()),
-                new Claim(JwtRegisteredClaimNames.Exp, new DateTimeOffset(DateTime.Now).AddDays(1).ToString())
+                new Claim(ClaimTypes.Actor, request.UserName),
+                new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.Role, "admin")
                 };
 
-                var key = new SymmetricSecurityKey(new ASCIIEncoding().GetBytes(_configuration.GetSection("key").Value));
-                var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-                var token = new JwtSecurityToken(request.UserName, "admins", claims,
-                    DateTime.Now,
-                    DateTime.Now.AddMinutes(5),
-                    cred);
+                var key = new SymmetricSecurityKey(new ASCIIEncoding().GetBytes(_configuration.GetSection("JWT:key").Value));
+                var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                var token = new JwtSecurityToken(issuer: _configuration.GetSection("JWT:validIssuer").Value,
+                                                audience: _configuration.GetSection("JWT:validAudience").Value,
+                                                claims,
+                                                DateTime.Now,
+                                                DateTime.Now.AddMinutes(5),
+                                                credentials);
 
                 reply.Token = new JwtSecurityTokenHandler().WriteToken(token);
                 reply.Result = LogInReply.Types.loginResult.Success;
