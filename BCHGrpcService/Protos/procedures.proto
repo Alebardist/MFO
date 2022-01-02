@@ -18,7 +18,7 @@ message RatingReply {
 }
 
 message CreditHistoryRequest{
-	string passportNumbers = 1;
+	string passportNumber = 1;
 }
 
 message CreditHistoryReply{

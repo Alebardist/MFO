@@ -5,6 +5,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
+using MongoDB.Driver;
+using Serilog;
+
 namespace BCHGrpcService
 {
     public class Startup
@@ -19,6 +22,14 @@ namespace BCHGrpcService
                 .AddJsonFile(@"S:\C#\Web\MFO\BCHGrpcService\appsettings.json")
                 .Build();
             services.AddSingleton(typeof(IConfiguration), config);
+
+            var serilog = new LoggerConfiguration().
+                MinimumLevel.Information().
+                WriteTo.Console().
+                WriteTo.MongoDB(new MongoClient().GetDatabase(config.GetSection("MongoDB:DBName").Value),
+                                collectionName: config.GetSection("MongoDB:LogsCollection").Value).
+                CreateLogger();
+            services.AddSingleton(typeof(ILogger), serilog);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -35,10 +46,9 @@ namespace BCHGrpcService
             {
                 endpoints.MapGrpcService<Services.BCHGrpcService>();
 
-                endpoints.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync("Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
-                });
+                endpoints.MapGet("/", async context => await context
+                    .Response
+                    .WriteAsync("Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909"));
             });
         }
     }

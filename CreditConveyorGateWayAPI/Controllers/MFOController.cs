@@ -79,6 +79,16 @@ namespace GatewayAPI.Controllers
 
                 result = Ok(creditRating);
             }
+            catch (RpcException e) when (e.StatusCode == Grpc.Core.StatusCode.NotFound)
+            {
+                result = NotFound($"{passport} not found");
+            }
+            catch (RpcException e)
+            {
+                _logger.Error(e, e.Message);
+
+                result = Problem($"{Grpc.Core.StatusCode.Internal}, {e.Message}");
+            }
             catch (Exception e)
             {
                 _logger.Error(e, e.Message);
@@ -136,7 +146,7 @@ namespace GatewayAPI.Controllers
             return result;
         }
 
-        //TODO: take PassportNUmbers from route, before this put together numbers in db
+        //TODO: take PassportNumber from route, before this put together numbers in db
         /// <summary>
         /// Returns CreditHistory by passport from BCH db
         /// </summary>
@@ -159,7 +169,7 @@ namespace GatewayAPI.Controllers
 
                 var request = new CreditHistoryRequest()
                 {
-                    PassportNumbers = passport
+                    PassportNumber = passport
                 };
 
                 result = Ok(client.GetCreditHistory(request));
@@ -172,7 +182,7 @@ namespace GatewayAPI.Controllers
             {
                 _logger.Error(e, e.Message);
 
-                result = Problem($"{Grpc.Core.StatusCode.NotFound}, {e.Message}");
+                result = Problem($"{Grpc.Core.StatusCode.Internal}, {e.Message}");
             }
             catch (Exception e)
             {
@@ -203,7 +213,7 @@ namespace GatewayAPI.Controllers
                                         Find(x => x.Id == ObjectId.Parse(debtId)).First();
                 reply = Ok(result);
             }
-            catch (InvalidOperationException e)
+            catch (InvalidOperationException)
             {
                 reply = NotFound($"{debtId} not exists");
             }
