@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 
 using BCHGrpcService;
 
@@ -9,12 +8,11 @@ using Grpc.Net.Client;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 using MongoDB.Bson;
 using MongoDB.Driver;
 
-using Newtonsoft.Json;
+using Serilog;
 
 using SharedLib.DTO;
 using SharedLib.MongoDB.Implementations;
@@ -25,9 +23,9 @@ namespace GatewayAPI.Controllers
     [Route("/api/[Controller]")]
     public class MFOController : ControllerBase
     {
-        private readonly ILogger<MFOController> _logger;
+        private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
-        public MFOController(ILogger<MFOController> logger, IConfiguration configuration)
+        public MFOController(ILogger logger, IConfiguration configuration)
         {
             _logger = logger;
             _configuration = configuration;
@@ -47,6 +45,7 @@ namespace GatewayAPI.Controllers
         )
         {
             //TODO: NotImplementedException
+            //logging: time, token, client's IP
             throw new NotImplementedException();
         }
 
@@ -80,9 +79,10 @@ namespace GatewayAPI.Controllers
 
                 result = Ok(creditRating);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                result = Problem(ex.Message, statusCode: 500);
+                _logger.Error(e, e.Message);
+                result = Problem(e.Message, statusCode: 500);
             }
 
             return result;
@@ -110,7 +110,7 @@ namespace GatewayAPI.Controllers
                 updatedDebt.Id = ObjectId.Parse(creditNoteId);
 
                 var updateResult = MongoDBAccessor<Debt>.
-                    GetMongoCollection(_configuration.GetSection("MongoDB:DBName").Value, 
+                    GetMongoCollection(_configuration.GetSection("MongoDB:DBName").Value,
                                         _configuration.GetSection("MongoDB:CollectionName").Value).
                     ReplaceOne(x => x.Id == ObjectId.Parse(creditNoteId), updatedDebt);
 
@@ -123,10 +123,14 @@ namespace GatewayAPI.Controllers
                     result = NotFound(creditNoteId);
                 }
             }
+            catch (FormatException e)
+            {
+                result = BadRequest(e.Message);
+            }
             catch (Exception e)
             {
+                _logger.Error(e, e.Message);
                 result = Problem(e.Message, statusCode: 500);
-                //TODO: logging
             }
 
             return result;
@@ -157,7 +161,7 @@ namespace GatewayAPI.Controllers
                 {
                     PassportNumbers = passport
                 };
-                
+
                 result = Ok(client.GetCreditHistory(request));
             }
             catch (RpcException e) when (e.StatusCode == Grpc.Core.StatusCode.NotFound)
@@ -166,10 +170,14 @@ namespace GatewayAPI.Controllers
             }
             catch (RpcException e)
             {
+                _logger.Error(e, e.Message);
+
                 result = Problem($"{Grpc.Core.StatusCode.NotFound}, {e.Message}");
             }
             catch (Exception e)
             {
+                _logger.Error(e, e.Message);
+
                 result = Problem(e.Message);
             }
 
@@ -201,6 +209,8 @@ namespace GatewayAPI.Controllers
             }
             catch (Exception e)
             {
+                _logger.Error(e, e.Message);
+
                 reply = Problem(e.Message, statusCode: 500);
             }
 
@@ -214,22 +224,12 @@ namespace GatewayAPI.Controllers
         [ProducesResponseType(404)]
         public IActionResult DeleteDebtByDebtId([FromRoute(Name = "debtId")] string debtId)
         {
-            IActionResult result;
             var deletionResult = MongoDBAccessor<Debt>.
                 GetMongoCollection(_configuration.GetSection("MongoDB:DBName").Value,
                                     _configuration.GetSection("MongoDB:CollectionName").Value).
                                     DeleteOne(x => x.Id == new ObjectId(debtId));
 
-            if (deletionResult.DeletedCount == 1)
-            {
-                result = Ok();
-            }
-            else
-            {
-                result = NotFound(debtId);
-            }
-
-            return result;
+            return deletionResult.DeletedCount == 1 ? Ok() : NotFound(debtId);
         }
     }
 }

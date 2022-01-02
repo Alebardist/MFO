@@ -5,6 +5,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
+using MongoDB.Driver;
+
+using Serilog;
+
 namespace GatewayAPI
 {
     public class Startup
@@ -20,15 +24,20 @@ namespace GatewayAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CreditConveyorGateWayAPI", Version = "v1" });
-            });
+            services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "CreditConveyorGateWayAPI", Version = "v1" }));
 
             IConfiguration config = new ConfigurationBuilder()
                 .AddJsonFile(@"S:\C#\Web\MFO\CreditConveyorGateWayAPI\appsettings.json")
                 .Build();
             services.AddSingleton(typeof(IConfiguration), config);
+
+            var serilog = new LoggerConfiguration().
+                MinimumLevel.Information().
+                WriteTo.Console().
+                WriteTo.MongoDB(new MongoClient().GetDatabase(config.GetSection("MongoDB:DBName").Value),
+                                collectionName: config.GetSection("MongoDB:LogsCollection").Value).
+                CreateLogger();
+            services.AddSingleton(typeof(ILogger), serilog);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,10 +54,7 @@ namespace GatewayAPI
 
             app.UseRouting();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints => endpoints.MapControllers());
         }
     }
 }
