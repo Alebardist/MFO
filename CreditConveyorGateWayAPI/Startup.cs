@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -24,7 +26,33 @@ namespace GatewayAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "CreditConveyorGateWayAPI", Version = "v1" }));
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = "CreditConveyorGateWayAPI", Version = "v1" });
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Name = "Authorization",
+                    Description = "Your JWT for Authorization header",
+                    Type = SecuritySchemeType.Http
+                });
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                        Reference = new OpenApiReference
+                                        {
+                                            Id = "Bearer",
+                                            Type = ReferenceType.SecurityScheme
+                                        }
+                        },
+                        new List<string>()
+                    }
+                });
+            });
 
             IConfiguration config = new ConfigurationBuilder()
                 .AddJsonFile(@"S:\C#\Web\MFO\CreditConveyorGateWayAPI\appsettings.json")
