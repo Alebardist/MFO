@@ -117,21 +117,14 @@ namespace GatewayAPI.Controllers
 
             try
             {
-                updatedDebt.Id = ObjectId.Parse(creditNoteId);
+                updatedDebt.Id = creditNoteId;
 
                 var updateResult = MongoDBAccessor<Debt>.
                     GetMongoCollection(_configuration.GetSection("MongoDB:DBName").Value,
                                         _configuration.GetSection("MongoDB:CollectionName").Value).
-                    ReplaceOne(x => x.Id == ObjectId.Parse(creditNoteId), updatedDebt);
+                    ReplaceOne(x => x.Id == creditNoteId, updatedDebt);
 
-                if (updateResult.ModifiedCount == 1)
-                {
-                    result = Ok();
-                }
-                else
-                {
-                    result = NotFound(creditNoteId);
-                }
+                result = (updateResult.ModifiedCount == 1) ? Ok() : NotFound(creditNoteId);
             }
             catch (FormatException e)
             {
@@ -194,7 +187,6 @@ namespace GatewayAPI.Controllers
             return result;
         }
 
-        //TODO: unimplemented
         [HttpGet]
         [Route("/api/[Controller]/{debtId}")]
         [Produces("application/json")]
@@ -210,7 +202,7 @@ namespace GatewayAPI.Controllers
                 var result = MongoDBAccessor<Debt>.
                     GetMongoCollection(_configuration.GetSection("MongoDB:DBName").Value,
                                         _configuration.GetSection("MongoDB:CollectionName").Value).
-                                        Find(x => x.Id == ObjectId.Parse(debtId)).First();
+                                        Find(x => x.Id == debtId).First();
                 reply = Ok(result);
             }
             catch (InvalidOperationException)
@@ -237,7 +229,7 @@ namespace GatewayAPI.Controllers
             var deletionResult = MongoDBAccessor<Debt>.
                 GetMongoCollection(_configuration.GetSection("MongoDB:DBName").Value,
                                     _configuration.GetSection("MongoDB:CollectionName").Value).
-                                    DeleteOne(x => x.Id == new ObjectId(debtId));
+                                    DeleteOne(x => x.Id == debtId);
 
             return deletionResult.DeletedCount == 1 ? Ok() : NotFound(debtId);
         }

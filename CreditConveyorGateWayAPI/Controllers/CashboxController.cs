@@ -32,6 +32,5 @@ namespace GatewayAPI.Controllers
             //return JSON with balances
             throw new NotImplementedException();
         }
-
     }
 }

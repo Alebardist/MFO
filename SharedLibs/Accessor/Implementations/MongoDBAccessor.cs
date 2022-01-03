@@ -6,7 +6,7 @@ namespace SharedLib.MongoDB.Implementations
     {
         public static IMongoCollection<T> GetMongoCollection(string dbName, string collectionName)
         {
-            MongoClient client = new MongoClient();
+            MongoClient client = new();
             IMongoDatabase mongoDatabase = client.GetDatabase(dbName);
 
             return mongoDatabase.GetCollection<T>(collectionName);

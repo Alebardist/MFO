@@ -21,7 +21,7 @@ namespace MFOTests
     //TODO: по сути, эти тесты являются интеграционными т.к. тестируя gateway мы тестируем и другие микросервисы
     public class GatewayTests
     {
-        private readonly HttpClient _httpClient = new HttpClient();
+        private readonly HttpClient _httpClient = new();
 
         public GatewayTests()
         {
@@ -41,14 +41,16 @@ namespace MFOTests
 
             Assert.Contains("25", result);
         }
+
         //TODO: when this test launches two times in a row with the same data (updatedDebt), it falls
         [Fact]
         public void UpdateCreditInformationMustUpdateObjectInDBCorrectly()
         {
             string objectId = "61c8b11846629713beada50c";
 
-            Debt updatedDebt = new Debt() 
-            { 
+            Debt updatedDebt = new()
+            {
+                Id = objectId,
                 Passport = "1234 123456",
                 Loan = 320,
                 Issued = DateTime.Parse("2021-01-10T21:00:00.000+00:00"),
@@ -59,15 +61,13 @@ namespace MFOTests
 
             using (var request = new HttpRequestMessage(HttpMethod.Put, $"{_httpClient.BaseAddress}/{objectId}"))
             {
-                var jsonContent = JsonContent.Create(updatedDebt, mediaType: new System.Net.Http.Headers.MediaTypeHeaderValue("application/json"));
-
-                request.Content = jsonContent;
+                request.Content = JsonContent.Create(updatedDebt, mediaType: new System.Net.Http.Headers.MediaTypeHeaderValue("application/json"));
                 _httpClient.Send(request).EnsureSuccessStatusCode();
             }
-            
+
             var debtFromDB = MongoDBAccessor<Debt>.
                 GetMongoCollection("MFO", "Debts").
-                Find(x => x.Id == ObjectId.Parse(objectId)).
+                Find(x => x.Id == objectId).
                 First();
 
             Assert.Equal(updatedDebt.Penalty, debtFromDB.Penalty);
@@ -90,13 +90,12 @@ namespace MFOTests
         [Fact]
         public void GetinformationByDebtIdMustReturnExpectedObject()
         {
-            var expected = MongoDBAccessor<Debt>.GetMongoCollection("MFO", "Debts").Find(x => x.Id == ObjectId.Parse("61c8b11846629713beada50c")).First();
+            var expected = MongoDBAccessor<Debt>.GetMongoCollection("MFO", "Debts").Find(x => x.Id == "61c8b11846629713beada50c").First();
 
             var reply = _httpClient.GetAsync($"{_httpClient.BaseAddress}/{expected.Id}").Result;
             var actual = reply.Content.ReadFromJsonAsync<Debt>().Result;
 
             Assert.Equal(expected.Penalty, actual.Penalty);
         }
-
     }
 }
