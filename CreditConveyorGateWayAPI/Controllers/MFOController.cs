@@ -99,7 +99,7 @@ namespace GatewayAPI.Controllers
         }
 
         [HttpPut]
-        [Route("/api/[Controller]/{creditNoteId}")]
+        [Route("/api/[Controller]")]
         [Consumes("application/json")]
         [ProducesResponseType(200)]
         [ProducesResponseType(401)]
@@ -108,23 +108,19 @@ namespace GatewayAPI.Controllers
         public IActionResult UpdateCreditInformation
         (
         [FromBody(EmptyBodyBehavior = Microsoft.AspNetCore.Mvc.ModelBinding.EmptyBodyBehavior.Disallow)]
-        Debt updatedDebt,
-        [FromRoute(Name = "creditNoteId")]
-        string creditNoteId
+        Debt updatedDebt
         )
         {
             IActionResult result;
 
             try
             {
-                updatedDebt.Id = creditNoteId;
-
                 var updateResult = MongoDBAccessor<Debt>.
                     GetMongoCollection(_configuration.GetSection("MongoDB:DBName").Value,
                                         _configuration.GetSection("MongoDB:CollectionName").Value).
-                    ReplaceOne(x => x.Id == creditNoteId, updatedDebt);
+                    ReplaceOne(x => x.Id == updatedDebt.Id, updatedDebt);
 
-                result = (updateResult.ModifiedCount == 1) ? Ok() : NotFound(creditNoteId);
+                result = (updateResult.ModifiedCount == 1) ? Ok() : NotFound(updatedDebt.Id);
             }
             catch (FormatException e)
             {

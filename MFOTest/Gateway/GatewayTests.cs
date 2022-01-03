@@ -59,7 +59,7 @@ namespace MFOTests
                 Interest = 3
             };
 
-            using (var request = new HttpRequestMessage(HttpMethod.Put, $"{_httpClient.BaseAddress}/{objectId}"))
+            using (var request = new HttpRequestMessage(HttpMethod.Put, $"{_httpClient.BaseAddress}/"))
             {
                 request.Content = JsonContent.Create(updatedDebt, mediaType: new System.Net.Http.Headers.MediaTypeHeaderValue("application/json"));
                 _httpClient.Send(request).EnsureSuccessStatusCode();
