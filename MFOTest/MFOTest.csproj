@@ -27,7 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CalculationLib\CalculationLib.csproj" />
     <ProjectReference Include="..\CashboxGrpcService\CashboxGrpcService.csproj" />
     <ProjectReference Include="..\CreditConveyorGateWayAPI\GatewayAPI.csproj" />
     <ProjectReference Include="..\SharedLibs\SharedLib.csproj" />

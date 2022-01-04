@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Google.Protobuf.WellKnownTypes;
@@ -28,6 +29,7 @@ namespace CashboxGrpcService.Services
         [Authorize]
         public override Task<SendMoneyReply> SendMoney(SendMoneyRequest request, ServerCallContext context)
         {
+            throw new NotImplementedException();
             SendMoneyReply reply = new()
             {
                 ErrorMessage = "",
