@@ -12,7 +12,7 @@ using Xunit;
 
 namespace MFOTest.Gateway
 {
-    //TODO: по сути, эти тесты являются интеграционными т.к. тестируя gateway мы тестируем и другие микросервисы
+    //NOTE: по сути, эти тесты являются интеграционными т.к. тестируя gateway мы тестируем и другие микросервисы
     public class MFOControllerTests
     {
         private readonly HttpClient _httpClient = new();
@@ -36,7 +36,7 @@ namespace MFOTest.Gateway
             Assert.Contains("25", result);
         }
 
-        //TODO: when this test launches two times in a row with the same data (updatedDebt), it falls
+        //NOTE: when this test launches two times in a row with the same data (updatedDebt), it falls
         [Fact]
         public void UpdateCreditInformationMustUpdateObjectInDBCorrectly()
         {

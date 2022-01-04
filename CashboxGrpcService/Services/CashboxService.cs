@@ -24,7 +24,7 @@ namespace CashboxGrpcService.Services
             _configuration = configuration;
         }
 
-        //TODO: unimplemented
+        //UNDONE: unimplemented
         [Authorize]
         public override Task<SendMoneyReply> SendMoney(SendMoneyRequest request, ServerCallContext context)
         {

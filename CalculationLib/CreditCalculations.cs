@@ -42,7 +42,7 @@ namespace CalculationLib
         /// <returns></returns>
         private static int GetScoreForPayedDebts(IEnumerable<CreditHistory> creditHistories)
         {
-            return creditHistories.Where(x => x.IsPayed == true).Count() * SCORE_FOR_PAYED_DEBTS;
+            return creditHistories.Count(x => x.IsPayed) * SCORE_FOR_PAYED_DEBTS;
         }
 
         /// <summary>

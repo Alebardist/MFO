@@ -35,7 +35,7 @@ namespace MFOTest.CalculationLib
                 Find(x => x.Passport == "1234 123456").
                 First().CreditHistory;
 
-            decimal actual = creditHistoriy.Where(x => x.IsPayed == false).Sum(x => x.Summ);
+            decimal actual = creditHistoriy.Where(x => !x.IsPayed).Sum(x => x.Summ);
 
             Assert.Equal(expected, actual);
         }

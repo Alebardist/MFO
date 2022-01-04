@@ -25,7 +25,7 @@ namespace SharedLib
             try
             {
                 MongoDBAccessor<UserCredentials>.
-                GetMongoCollection(dbName, collectionName). //TODO: how to pass DB and collection names?
+                GetMongoCollection(dbName, collectionName).
                                    Find(x => x.UserName == userName
                                         &&
                                         x.UserPassword == passwordHash).First();

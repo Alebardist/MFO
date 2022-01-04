@@ -23,7 +23,7 @@ namespace CashboxGrpcService
                 .Build();
             services.AddSingleton(typeof(IConfiguration), config);
 
-            //TODO: does this project need to have CORS policy?
+            //NOTE: does this project need to have CORS policy?
             //services.AddCors(options =>
             //{
             //    options.AddPolicy("CorsPolicy",
@@ -69,7 +69,7 @@ namespace CashboxGrpcService
             {
                 endpoints.MapGrpcService<Services.CashboxService>();
 
-                endpoints.MapGet("/", async context => await context.Response.WriteAsync("Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909"));
+                endpoints.MapGet("/", async context => await context.Response.WriteAsync("Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909").ConfigureAwait(false));
             });
         }
     }

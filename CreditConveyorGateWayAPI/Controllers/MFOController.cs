@@ -44,7 +44,7 @@ namespace GatewayAPI.Controllers
             string password
         )
         {
-            //TODO: NotImplementedException
+            //UNDONE: NotImplementedException
             //logging: time, token, client's IP
             throw new NotImplementedException();
         }
@@ -135,7 +135,6 @@ namespace GatewayAPI.Controllers
             return result;
         }
 
-        //TODO: take PassportNumber from route, before this put together numbers in db
         /// <summary>
         /// Returns CreditHistory by passport from BCH db
         /// </summary>
