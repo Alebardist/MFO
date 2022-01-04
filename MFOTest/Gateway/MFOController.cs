@@ -1,15 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text.Json;
 
-using MongoDB.Bson;
 using MongoDB.Driver;
-
-using Newtonsoft.Json;
 
 using SharedLib.DTO;
 using SharedLib.MongoDB.Implementations;
@@ -19,11 +13,11 @@ using Xunit;
 namespace MFOTests
 {
     //TODO: по сути, эти тесты являются интеграционными т.к. тестируя gateway мы тестируем и другие микросервисы
-    public class GatewayTests
+    public class MFOController
     {
         private readonly HttpClient _httpClient = new();
 
-        public GatewayTests()
+        public MFOController()
         {
             _httpClient.BaseAddress = new Uri("https://localhost:44317/api/MFO");
         }

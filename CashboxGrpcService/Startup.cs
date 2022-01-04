@@ -24,7 +24,7 @@ namespace CashboxGrpcService
                 .Build();
             services.AddSingleton(typeof(IConfiguration), config);
 
-            //TODO: do this project needs to have CORS policy?
+            //TODO: does this project need to have CORS policy?
             //services.AddCors(options =>
             //{
             //    options.AddPolicy("CorsPolicy",
@@ -39,10 +39,13 @@ namespace CashboxGrpcService
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(config.GetSection("JWT:key").Value)),
+
                     ValidateIssuer = true,
                     ValidIssuer = config.GetSection("JWT:validIssuer").Value,
+
                     ValidateAudience = true,
                     ValidAudience = config.GetSection("JWT:validAudience").Value,
+
                     ValidateLifetime = true
                 }
                 );
@@ -67,10 +70,7 @@ namespace CashboxGrpcService
             {
                 endpoints.MapGrpcService<Services.CashboxService>();
 
-                endpoints.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync("Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
-                });
+                endpoints.MapGet("/", async context => await context.Response.WriteAsync("Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909"));
             });
         }
     }

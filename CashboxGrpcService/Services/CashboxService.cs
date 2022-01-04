@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Google.Protobuf.WellKnownTypes;
@@ -13,7 +7,6 @@ using Grpc.Core;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 
 using MongoDB.Driver;
 
@@ -29,46 +22,6 @@ namespace CashboxGrpcService.Services
         public CashboxService(IConfiguration configuration)
         {
             _configuration = configuration;
-        }
-
-        /// <summary>
-        /// Log in service to get JWT.
-        /// </summary>
-        /// <param name="request"></param>
-        /// <param name="context"></param>
-        /// <returns>Reply with operation result and JWT</returns>
-        [AllowAnonymous]
-        public override Task<LogInReply> LogInService(LogInRequest request, ServerCallContext context)
-        {
-            var reply = new LogInReply() { Result = LogInReply.Types.loginResult.WrongUserNameOrPassword };
-
-            if (CheckCredentialsCorrectness(request, out UserCredentials credentials))
-            {
-                string role = credentials.Role;
-
-                var claims = new List<Claim>()
-                {
-                new Claim(ClaimTypes.Actor, request.UserName),
-                new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.Role, role)
-                };
-
-                var key = new SymmetricSecurityKey(new ASCIIEncoding().GetBytes(_configuration.GetSection("JWT:key").Value));
-                var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-                var token = new JwtSecurityToken(issuer: _configuration.GetSection("JWT:validIssuer").Value,
-                                                audience: _configuration.GetSection("JWT:validAudience").Value,
-                                                claims,
-                                                DateTime.Now,
-                                                DateTime.Now.AddMinutes(5),
-                                                signingCredentials);
-
-                reply.Token = new JwtSecurityTokenHandler().WriteToken(token);
-                reply.Result = LogInReply.Types.loginResult.Success;
-            }
-
-            Console.WriteLine(reply.Token);
-
-            return Task.FromResult(reply);
         }
 
         //TODO: unimplemented
@@ -94,30 +47,6 @@ namespace CashboxGrpcService.Services
             TranslateEnumerableToObjects(balances, out BalancesReply reply);
 
             return Task.FromResult(reply);
-        }
-
-        private bool CheckCredentialsCorrectness(LogInRequest request, out UserCredentials checkedCredentials)
-        {
-            checkedCredentials = null;
-
-            byte[] passwordHash = SHA256.HashData(new ASCIIEncoding().GetBytes(request.UserPassword));
-
-            try
-            {
-                checkedCredentials = MongoDBAccessor<UserCredentials>.
-                GetMongoCollection(_configuration.GetSection("MongoDB:DBName").Value,
-                                   _configuration.GetSection("MongoDB:CollectionName").Value).
-                                   Find(x => x.UserName == request.UserName
-                                        &&
-                                        x.UserPassword == passwordHash).First();
-            }
-            catch (InvalidOperationException e)
-            {
-                Console.WriteLine($"Credentials not found {e.Message}");
-                return false;
-            }
-
-            return true;
         }
 
         private void TranslateEnumerableToObjects(IEnumerable<Balance> balances, out BalancesReply reply)
