@@ -1,9 +1,8 @@
-﻿using System;
-
-using Xunit;
+﻿using System.ComponentModel;
 
 using SharedLib;
-using System.ComponentModel;
+
+using Xunit;
 
 namespace MFOTest.SharedLib
 {

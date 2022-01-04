@@ -1,5 +1,5 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace SharedLib.DTO
 {
@@ -7,6 +7,7 @@ namespace SharedLib.DTO
     {
         [BsonRepresentation(BsonType.String)]
         public string Name { get; set; }
+
         [BsonRepresentation(BsonType.Decimal128)]
         public decimal MonthSalary { get; set; }
     }

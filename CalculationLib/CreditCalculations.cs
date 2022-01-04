@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 
 using SharedLib.DTO;
 
@@ -26,7 +26,7 @@ namespace CalculationLib
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="creditHistories"></param>
         /// <returns></returns>
@@ -65,6 +65,5 @@ namespace CalculationLib
         {
             throw new NotImplementedException();
         }
-
     }
 }

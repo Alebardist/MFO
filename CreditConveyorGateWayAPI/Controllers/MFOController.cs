@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
-using MongoDB.Bson;
 using MongoDB.Driver;
 
 using Serilog;
@@ -25,6 +24,7 @@ namespace GatewayAPI.Controllers
     {
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
+
         public MFOController(ILogger logger, IConfiguration configuration)
         {
             _logger = logger;

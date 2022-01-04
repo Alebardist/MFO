@@ -26,6 +26,7 @@ namespace GatewayAPI.Controllers
         private readonly IConfiguration _configuration;
         private readonly GrpcChannel _channel;
         private readonly Cashbox.CashboxClient _cashboxClient;
+
         public CashboxController(ILogger logger, IConfiguration configuration)
         {
             _logger = logger;

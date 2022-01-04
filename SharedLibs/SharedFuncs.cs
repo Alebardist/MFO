@@ -59,6 +59,5 @@ namespace SharedLib
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-
     }
 }

@@ -1,5 +1,7 @@
 ﻿using BCHGrpcService;
+
 using Grpc.Net.Client;
+
 using Xunit;
 
 namespace MFOTest.BCHService
@@ -13,9 +15,9 @@ namespace MFOTest.BCHService
             var client = new BCHGrpc.BCHGrpcClient(channel);
 
             var reply = await client.GetRatingByPassportAsync(
-                              new RatingRequest 
-                              { 
-                                  PassportNumber = "1234 123456" 
+                              new RatingRequest
+                              {
+                                  PassportNumber = "1234 123456"
                               });
 
             Assert.Equal(25, reply.Rating);
