@@ -2,9 +2,9 @@
 using Grpc.Net.Client;
 using Xunit;
 
-namespace MFOTests.BCH
+namespace MFOTest.BCHService
 {
-    public class gRPCTests
+    public class BCHServiceTests
     {
         [Fact]
         public async void RatingReplyMustContainExpectedRatingForRatingRequest()

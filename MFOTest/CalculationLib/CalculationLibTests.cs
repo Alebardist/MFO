@@ -9,7 +9,7 @@ using SharedLib.MongoDB.Implementations;
 
 using Xunit;
 
-namespace MFOTests.CalculationLib
+namespace MFOTest.CalculationLib
 {
     public class CalculationLibTests
     {

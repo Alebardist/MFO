@@ -10,14 +10,14 @@ using SharedLib.MongoDB.Implementations;
 
 using Xunit;
 
-namespace MFOTests
+namespace MFOTest.Gateway
 {
     //TODO: по сути, эти тесты являются интеграционными т.к. тестируя gateway мы тестируем и другие микросервисы
-    public class MFOController
+    public class MFOControllerTests
     {
         private readonly HttpClient _httpClient = new();
 
-        public MFOController()
+        public MFOControllerTests()
         {
             _httpClient.BaseAddress = new Uri("https://localhost:44317/api/MFO");
         }

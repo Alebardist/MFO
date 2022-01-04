@@ -5,11 +5,11 @@ using Xunit;
 
 namespace MFOTest.Gateway
 {
-    public class CashboxController
+    public class CashboxControllerTests
     {
         private readonly HttpClient _httpClient = new();
 
-        public CashboxController()
+        public CashboxControllerTests()
         {
             _httpClient.BaseAddress = new Uri("https://localhost:44317/api/Cashbox");
         }
