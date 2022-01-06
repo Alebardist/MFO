@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Text;
 
+using AspNetCoreRateLimit;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -28,6 +30,14 @@ namespace GatewayAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddOptions();
+            services.AddMemoryCache();
+
+            services.Configure<IpRateLimitOptions>(Configuration.GetSection("IpRateLimiting"));
+            services.Configure<IpRateLimitPolicies>(Configuration.GetSection("IpRateLimitPolicies"));
+
+            services.AddInMemoryRateLimiting();
+
             services.AddControllers();
             services.AddSwaggerGen(options =>
             {
@@ -56,19 +66,17 @@ namespace GatewayAPI
                     }
                 });
             });
-
-            IConfiguration config = new ConfigurationBuilder()
-                .AddJsonFile(@"S:\C#\Web\MFO\CreditConveyorGateWayAPI\appsettings.json")
-                .Build();
-            services.AddSingleton(typeof(IConfiguration), config);
+            
+            services.AddSingleton(typeof(IConfiguration), Configuration);
 
             var serilog = new LoggerConfiguration().
                 MinimumLevel.Information().
                 WriteTo.Console().
-                WriteTo.MongoDB(new MongoClient().GetDatabase(config.GetSection("MongoDB:DBName").Value),
-                                collectionName: config.GetSection("MongoDB:LogsCollection").Value).
+                WriteTo.MongoDB(new MongoClient().GetDatabase(Configuration.GetSection("MongoDB:DBName").Value),
+                                collectionName: Configuration.GetSection("MongoDB:LogsCollection").Value).
                 CreateLogger();
             services.AddSingleton(typeof(ILogger), serilog);
+            services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
 
             services.AddAuthentication(
                 JwtBearerDefaults.AuthenticationScheme)
@@ -76,23 +84,26 @@ namespace GatewayAPI
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(config.GetSection("JWT:key").Value)),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetSection("JWT:key").Value)),
 
                     ValidateIssuer = true,
-                    ValidIssuer = config.GetSection("JWT:validIssuer").Value,
+                    ValidIssuer = Configuration.GetSection("JWT:validIssuer").Value,
 
                     ValidateAudience = true,
-                    ValidAudience = config.GetSection("JWT:validAudience").Value,
+                    ValidAudience = Configuration.GetSection("JWT:validAudience").Value,
 
                     ValidateLifetime = true
                 }
                 );
             services.AddAuthorization();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseIpRateLimiting();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
