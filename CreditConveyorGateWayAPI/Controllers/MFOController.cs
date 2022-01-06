@@ -228,5 +228,13 @@ namespace GatewayAPI.Controllers
 
             return deletionResult.DeletedCount == 1 ? Ok() : NotFound(debtId);
         }
+
+        [HttpGet]
+        [Route("/checkHealth")]
+        public IActionResult Checkstatus()
+        {
+            return Ok("Health Ok!");
+        }
+
     }
 }

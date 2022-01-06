@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 
@@ -90,6 +91,23 @@ namespace MFOTest.Gateway
             var actual = reply.Content.ReadFromJsonAsync<Debt>().Result;
 
             Assert.Equal(expected.Penalty, actual.Penalty);
+        }
+
+        [Fact]
+        public void CheckHealthMustReturnCode429()
+        {
+            HttpStatusCode expected = HttpStatusCode.TooManyRequests;
+
+            HttpStatusCode actual = HttpStatusCode.OK;
+
+            int requestsCount = 2; //requests per second
+
+            for (int i = 0; i < requestsCount; i++)
+            {
+                actual = _httpClient.GetAsync("https://localhost:44317/checkHealth").Result.StatusCode;
+            }
+            
+            Assert.Equal(expected, actual);
         }
     }
 }
