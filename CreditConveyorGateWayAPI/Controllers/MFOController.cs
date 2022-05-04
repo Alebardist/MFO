@@ -45,7 +45,7 @@ namespace GatewayAPI.Controllers
         )
         {
             //UNDONE: NotImplementedException
-            //logging: time, token, client's IP
+            //TODO:logging: time, token, client's IP
             throw new NotImplementedException();
         }
 
@@ -72,7 +72,7 @@ namespace GatewayAPI.Controllers
 
             try
             {
-                var channel = GrpcChannel.ForAddress("https://localhost:5001");
+                var channel = GrpcChannel.ForAddress(_configuration.GetSection("BCHGrpcService:AddressAndPort").Value);
                 var client = new BCHGrpc.BCHGrpcClient(channel);
 
                 int creditRating = client.GetRatingByPassport(new RatingRequest { PassportNumber = passport }).Rating;
@@ -152,7 +152,7 @@ namespace GatewayAPI.Controllers
 
             try
             {
-                using var channel = GrpcChannel.ForAddress("https://localhost:5001");
+                using var channel = GrpcChannel.ForAddress(_configuration.GetSection("BCHGrpcService:AddressAndPort").Value);
                 var client = new BCHGrpc.BCHGrpcClient(channel);
 
                 var request = new CreditHistoryRequest()

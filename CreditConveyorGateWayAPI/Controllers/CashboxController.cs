@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-using CashboxGrpcService;
+﻿using CashboxGrpcService;
 
 using Google.Protobuf.WellKnownTypes;
 
@@ -15,6 +12,9 @@ using Microsoft.Extensions.Configuration;
 using Serilog;
 
 using SharedLib;
+
+using System;
+using System.Collections.Generic;
 
 namespace GatewayAPI.Controllers
 {
@@ -31,7 +31,7 @@ namespace GatewayAPI.Controllers
         {
             _logger = logger;
             _configuration = configuration;
-            _channel = GrpcChannel.ForAddress("https://localhost:5001");
+            _channel = GrpcChannel.ForAddress(_configuration.GetSection("BCHGrpcService:AddressAndPort").Value);
             _cashboxClient = new Cashbox.CashboxClient(_channel);
         }
 
@@ -40,6 +40,7 @@ namespace GatewayAPI.Controllers
         [Route("/api/[controller]/Token")]
         [ProducesResponseType(200)]
         [ProducesResponseType(401)]
+        [ProducesResponseType(429)]
         [ProducesResponseType(500)]
         public IActionResult GetToken(
             [FromHeader(Name = "UserName")]
@@ -84,6 +85,7 @@ namespace GatewayAPI.Controllers
         [Produces("application/json")]
         [ProducesResponseType(200)]
         [ProducesResponseType(401)]
+        [ProducesResponseType(429)]
         [ProducesResponseType(500)]
         public IActionResult GetBalances([FromHeader(Name = "Authorization")] string token)
         {

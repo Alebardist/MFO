@@ -8,11 +8,12 @@ namespace MFOTest.BCHService
 {
     public class BCHServiceTests
     {
+        private GrpcChannel _channel = GrpcChannel.ForAddress("https://localhost:5003");
+
         [Fact]
         public async void RatingReplyMustContainExpectedRatingForRatingRequest()
         {
-            using var channel = GrpcChannel.ForAddress("https://localhost:5001");
-            var client = new BCHGrpc.BCHGrpcClient(channel);
+            var client = new BCHGrpc.BCHGrpcClient(_channel);
 
             var reply = await client.GetRatingByPassportAsync(
                               new RatingRequest

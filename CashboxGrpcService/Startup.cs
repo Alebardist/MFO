@@ -19,7 +19,7 @@ namespace CashboxGrpcService
         public void ConfigureServices(IServiceCollection services)
         {
             IConfiguration config = new ConfigurationBuilder()
-                .AddJsonFile(@"S:\C#\Web\MFO\CashboxGrpcService\appsettings.json")
+                .AddJsonFile(@"E:\C#\Web\MFO\CashboxGrpcService\appsettings.json")
                 .Build();
             services.AddSingleton(typeof(IConfiguration), config);
 

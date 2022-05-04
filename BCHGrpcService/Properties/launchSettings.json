@@ -2,9 +2,7 @@
   "profiles": {
     "BCHGrpcService": {
       "commandName": "Project",
-      "dotnetRunMessages": "true",
-      "launchBrowser": false,
-      "applicationUrl": "http://localhost:5000;https://localhost:5001",
+      "dotnetRunMessages": "false",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

@@ -20,7 +20,7 @@ namespace BCHGrpcService
             services.AddGrpc();
 
             IConfiguration config = new ConfigurationBuilder()
-                .AddJsonFile(@"S:\C#\Web\MFO\BCHGrpcService\appsettings.json")
+                .AddJsonFile(@"E:\C#\Web\MFO\BCHGrpcService\appsettings.json")
                 .Build();
             services.AddSingleton(typeof(IConfiguration), config);
 

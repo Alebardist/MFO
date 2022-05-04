@@ -25,16 +25,24 @@ namespace CashboxGrpcService.Services
             _configuration = configuration;
         }
 
-        //UNDONE: unimplemented
+        //TODO: unimplimented LogInService
+        [AllowAnonymous]
+        public override Task<LogInReply> LogInService(LogInRequest request, ServerCallContext context)
+        {
+            throw new NotImplementedException();
+            return base.LogInService(request, context);
+        }
+
+        //UNDONE: method unimplemented
         [Authorize]
         public override Task<SendMoneyReply> SendMoney(SendMoneyRequest request, ServerCallContext context)
         {
-            throw new NotImplementedException();
             SendMoneyReply reply = new()
             {
                 ErrorMessage = "",
                 Result = SendMoneyReply.Types.operationResult.Error
             };
+            throw new NotImplementedException();
 
             return Task.FromResult(reply);
         }
