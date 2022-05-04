@@ -99,9 +99,10 @@ namespace GatewayAPI.Controllers
         }
 
         [HttpPut]
-        [Route("/api/[Controller]")]
+        [Route("/api/[Controller]/Debt")]
         [Consumes("application/json")]
         [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]

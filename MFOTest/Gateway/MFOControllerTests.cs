@@ -54,7 +54,7 @@ namespace MFOTest.Gateway
                 Interest = 3
             };
 
-            using (var request = new HttpRequestMessage(HttpMethod.Put, $"{_httpClient.BaseAddress}/"))
+            using (var request = new HttpRequestMessage(HttpMethod.Put, $"{_httpClient.BaseAddress}/Debt"))
             {
                 request.Content = JsonContent.Create(updatedDebt, mediaType: new System.Net.Http.Headers.MediaTypeHeaderValue("application/json"));
                 _httpClient.Send(request).EnsureSuccessStatusCode();
