@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-using Google.Protobuf.WellKnownTypes;
+﻿using Google.Protobuf.WellKnownTypes;
 
 using Grpc.Core;
 
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 
 using MongoDB.Driver;
 
 using SharedLib.DTO;
 using SharedLib.MongoDB.Implementations;
+
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CashboxGrpcService
 {

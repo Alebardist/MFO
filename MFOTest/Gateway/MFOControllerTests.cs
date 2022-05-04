@@ -1,13 +1,13 @@
+using MongoDB.Driver;
+
+using SharedLib.DTO;
+using SharedLib.MongoDB.Implementations;
+
 using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
-
-using MongoDB.Driver;
-
-using SharedLib.DTO;
-using SharedLib.MongoDB.Implementations;
 
 using Xunit;
 
@@ -100,13 +100,13 @@ namespace MFOTest.Gateway
 
             HttpStatusCode actual = HttpStatusCode.OK;
 
-            int requestsCount = 2; //requests per second
+            int requestsCount = 2;
 
             for (int i = 0; i < requestsCount; i++)
             {
                 actual = _httpClient.GetAsync("https://localhost:44317/checkHealth").Result.StatusCode;
             }
-            
+
             Assert.Equal(expected, actual);
         }
     }

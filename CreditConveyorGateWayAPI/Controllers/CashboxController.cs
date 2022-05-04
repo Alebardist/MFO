@@ -83,7 +83,7 @@ namespace GatewayAPI.Controllers
         [ProducesResponseType(401)]
         [ProducesResponseType(429)]
         [ProducesResponseType(500)]
-        public IActionResult GetBalances([FromHeader(Name = "Authorization")] string token)
+        public IActionResult GetBalances()
         {
             IActionResult result;
 

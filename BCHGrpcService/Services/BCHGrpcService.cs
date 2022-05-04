@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-using CalculationLib;
+﻿using CalculationLib;
 
 using Grpc.Core;
 
@@ -16,6 +12,10 @@ using Serilog;
 
 using SharedLib.DTO;
 using SharedLib.MongoDB.Implementations;
+
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BCHGrpcService.Services
 {

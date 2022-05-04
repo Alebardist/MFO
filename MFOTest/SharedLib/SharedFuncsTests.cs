@@ -1,6 +1,6 @@
-﻿using System.ComponentModel;
+﻿using SharedLib;
 
-using SharedLib;
+using System.ComponentModel;
 
 using Xunit;
 

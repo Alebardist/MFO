@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using System.Text;
-
 using AspNetCoreRateLimit;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -15,6 +12,9 @@ using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 
 using Serilog;
+
+using System.Collections.Generic;
+using System.Text;
 
 namespace GatewayAPI
 {
@@ -66,7 +66,7 @@ namespace GatewayAPI
                     }
                 });
             });
-            
+
             services.AddSingleton(typeof(IConfiguration), Configuration);
 
             var serilog = new LoggerConfiguration().
@@ -96,7 +96,6 @@ namespace GatewayAPI
                 }
                 );
             services.AddAuthorization();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

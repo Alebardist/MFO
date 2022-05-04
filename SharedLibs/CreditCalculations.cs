@@ -1,8 +1,8 @@
-﻿using System;
+﻿using SharedLib.DTO;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
-
-using SharedLib.DTO;
 
 namespace CalculationLib
 {
@@ -26,7 +26,7 @@ namespace CalculationLib
         }
 
         /// <summary>
-        ///
+        /// Returns average debt by Average LINQ method
         /// </summary>
         /// <param name="creditHistories"></param>
         /// <returns></returns>

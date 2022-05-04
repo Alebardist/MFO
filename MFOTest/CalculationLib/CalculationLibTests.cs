@@ -1,11 +1,11 @@
-﻿using System.Linq;
-
-using CalculationLib;
+﻿using CalculationLib;
 
 using MongoDB.Driver;
 
 using SharedLib.DTO;
 using SharedLib.MongoDB.Implementations;
+
+using System.Linq;
 
 using Xunit;
 

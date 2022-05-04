@@ -33,12 +33,12 @@ namespace MFOTest.Gateway
             var contentWithHeaders = new StringContent("");
             contentWithHeaders.Headers.Add("UserName", "admin");
             contentWithHeaders.Headers.Add("Password", "adminPass");
-            
+
             var token = _httpClient.PostAsync($"{_httpClient.BaseAddress}/Token", contentWithHeaders).
                 Result.EnsureSuccessStatusCode().
                 Content.ReadAsStringAsync().
                 Result;
-            
+
             var request = new HttpRequestMessage(HttpMethod.Get, $"{_httpClient.BaseAddress}/Balances");
             request.Headers.Add("Authorization", $"Bearer {token}");
             var requestResult = _httpClient.Send(request);

@@ -8,7 +8,7 @@ namespace MFOTest.BCHService
 {
     public class BCHServiceTests
     {
-        private GrpcChannel _channel = GrpcChannel.ForAddress("https://localhost:5003");
+        private readonly GrpcChannel _channel = GrpcChannel.ForAddress("https://localhost:5003");
 
         [Fact]
         public async void RatingReplyMustContainExpectedRatingForRatingRequest()

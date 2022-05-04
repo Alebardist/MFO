@@ -1,11 +1,7 @@
-﻿using System;
-using System.Net.Http;
-
-using CashboxGrpcService;
+﻿using CashboxGrpcService;
 
 using Google.Protobuf.WellKnownTypes;
 
-using Grpc.Core;
 using Grpc.Net.Client;
 
 using Xunit;
@@ -16,7 +12,6 @@ namespace MFOTest.CashboxServiceTests
     {
         private readonly GrpcChannel _channel;
         private readonly Cashbox.CashboxClient _cashboxClient;
-        private readonly HttpClient _httpClient = new() { BaseAddress = new Uri("https://localhost:44317/api/Cashbox") };
 
         public CashboxServiceTests()
         {

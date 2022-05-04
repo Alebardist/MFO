@@ -1,6 +1,4 @@
-﻿using System;
-
-using BCHGrpcService;
+﻿using BCHGrpcService;
 
 using Grpc.Core;
 using Grpc.Net.Client;
@@ -15,6 +13,8 @@ using Serilog;
 
 using SharedLib.DTO;
 using SharedLib.MongoDB.Implementations;
+
+using System;
 
 namespace GatewayAPI.Controllers
 {
@@ -235,6 +235,5 @@ namespace GatewayAPI.Controllers
         {
             return Ok("Health Ok!");
         }
-
     }
 }
