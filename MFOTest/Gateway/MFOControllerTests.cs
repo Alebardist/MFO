@@ -23,20 +23,6 @@ namespace MFOTest.Gateway
             _httpClient.BaseAddress = new Uri("https://localhost:44317/api/MFO");
         }
 
-        [Fact]
-        public void GetRatingMustReturnCorrectValue()
-        {
-            string result;
-
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"{_httpClient.BaseAddress}/Rating"))
-            {
-                request.Headers.Add("PassportNumbers", "1234 123456");
-                result = _httpClient.Send(request).EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result;
-            }
-
-            Assert.Contains("25", result);
-        }
-
         //NOTE: when this test launches two times in a row with the same data (updatedDebt), it falls
         [Fact]
         public void UpdateCreditInformationMustUpdateObjectInDBCorrectly()
@@ -66,20 +52,6 @@ namespace MFOTest.Gateway
                 First();
 
             Assert.Equal(updatedDebt.Penalty, debtFromDB.Penalty);
-        }
-
-        [Fact]
-        public void GetCreditHistoryByPassportMustReturnObjectOfCreditHistoryWithExpectedId()
-        {
-            string result;
-
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"{_httpClient.BaseAddress}/CreditHistory"))
-            {
-                request.Headers.Add("PassportNumbers", "1234 123456");
-                result = _httpClient.Send(request).EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result;
-            }
-
-            Assert.Contains("61bb03975864f85c6b9eb53f", result);
         }
 
         [Fact]
