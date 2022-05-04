@@ -1,29 +1,13 @@
 syntax = "proto3";
 
 import "google/protobuf/empty.proto";
-//option csharp_namespace = "CashboxGrpcService";
+option csharp_namespace = "CashboxGrpcService";
 
 package CashboxGrpcService;
 
 service Cashbox{
-	rpc LogInService (LogInRequest) returns (LogInReply);
 	rpc SendMoney (SendMoneyRequest) returns (SendMoneyReply);
 	rpc GetBalances (google.protobuf.Empty) returns (BalancesReply);
-}
-
-message LogInRequest{
-	string userName = 1;
-	string userPassword = 2;
-}
-
-message LogInReply{
-	enum loginResult{
-		SUCCESS = 0;
-		Wrong_userName_or_password = 1;
-	}
-
-	loginResult result = 1;
-	string token = 2;
 }
 
 message SendMoneyRequest{

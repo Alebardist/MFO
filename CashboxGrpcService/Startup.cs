@@ -31,24 +31,6 @@ namespace CashboxGrpcService
             //});
 
             services.AddGrpc();
-            services.AddAuthentication(
-                JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(config.GetSection("JWT:key").Value)),
-
-                    ValidateIssuer = true,
-                    ValidIssuer = config.GetSection("JWT:validIssuer").Value,
-
-                    ValidateAudience = true,
-                    ValidAudience = config.GetSection("JWT:validAudience").Value,
-
-                    ValidateLifetime = true
-                }
-                );
-            services.AddAuthorization();
             services.AddMvc();
         }
 
@@ -62,12 +44,9 @@ namespace CashboxGrpcService
 
             app.UseRouting();
 
-            app.UseAuthentication();
-            app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<Services.CashboxService>();
+                endpoints.MapGrpcService<CashboxService>();
 
                 endpoints.MapGet("/", async context => await context.Response.WriteAsync("Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909").ConfigureAwait(false));
             });

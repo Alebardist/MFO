@@ -14,7 +14,7 @@ using MongoDB.Driver;
 using SharedLib.DTO;
 using SharedLib.MongoDB.Implementations;
 
-namespace CashboxGrpcService.Services
+namespace CashboxGrpcService
 {
     public class CashboxService : Cashbox.CashboxBase
     {
@@ -25,29 +25,20 @@ namespace CashboxGrpcService.Services
             _configuration = configuration;
         }
 
-        //TODO: unimplimented LogInService
-        [AllowAnonymous]
-        public override Task<LogInReply> LogInService(LogInRequest request, ServerCallContext context)
-        {
-            throw new NotImplementedException();
-            return base.LogInService(request, context);
-        }
-
         //UNDONE: method unimplemented
-        [Authorize]
         public override Task<SendMoneyReply> SendMoney(SendMoneyRequest request, ServerCallContext context)
         {
+            throw new NotImplementedException();
+
             SendMoneyReply reply = new()
             {
                 ErrorMessage = "",
                 Result = SendMoneyReply.Types.operationResult.Error
             };
-            throw new NotImplementedException();
 
             return Task.FromResult(reply);
         }
 
-        [Authorize]
         public override Task<BalancesReply> GetBalances(Empty request, ServerCallContext context)
         {
             var balances = MongoDBAccessor<Balance>.

@@ -27,17 +27,7 @@ namespace MFOTest.CashboxServiceTests
         [Fact]
         public void GetBalancesMustReturnExpectedBalancesReply()
         {
-            HttpContent contentWithHeaders = new StringContent(""); //TODO: use multipart instead of headers?
-            contentWithHeaders.Headers.Add("UserName", "admin");
-            contentWithHeaders.Headers.Add("Password", "adminPass");
-            var token = _httpClient.PostAsync($"{_httpClient.BaseAddress}/Token", contentWithHeaders).Result.
-                EnsureSuccessStatusCode().
-                Content.ReadAsStringAsync().Result;
-
-            Metadata headers = new();
-            headers.Add("Authorization", $"Bearer {token}");
-
-            var actual = _cashboxClient.GetBalances(new Empty(), headers);
+            var actual = _cashboxClient.GetBalances(new Empty());
 
             Assert.NotEmpty(actual.Balances);
         }

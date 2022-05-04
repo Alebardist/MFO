@@ -31,7 +31,7 @@ namespace GatewayAPI.Controllers
         {
             _logger = logger;
             _configuration = configuration;
-            _channel = GrpcChannel.ForAddress(_configuration.GetSection("BCHGrpcService:AddressAndPort").Value);
+            _channel = GrpcChannel.ForAddress(_configuration.GetSection("CashboxGrpcService:AddressAndPort").Value);
             _cashboxClient = new Cashbox.CashboxClient(_channel);
         }
 
@@ -66,10 +66,6 @@ namespace GatewayAPI.Controllers
                     _logger.Debug($"Unauthorized {name}, {password}");
                 }
             }
-            catch (RpcException ex) when (ex.StatusCode == Grpc.Core.StatusCode.Unauthenticated)
-            {
-                result = Unauthorized(ex.Message);
-            }
             catch (Exception ex)
             {
                 _logger.Error(ex, ex.Message);
@@ -91,19 +87,11 @@ namespace GatewayAPI.Controllers
         {
             IActionResult result;
 
-            Metadata headers = new();
-            headers.Add("Authorization", $"{token}");
-
             IEnumerable<BalanceObject> content;
             try
             {
-                content = _cashboxClient.GetBalances(new Empty(), headers).Balances;
+                content = _cashboxClient.GetBalances(new Empty()).Balances;
                 result = Ok(content);
-            }
-            catch (RpcException ex) when (ex.StatusCode == Grpc.Core.StatusCode.Unauthenticated)
-            {
-                _logger.Warning(ex, ex.Message);
-                result = Unauthorized(ex.Message);
             }
             catch (RpcException ex)
             {
