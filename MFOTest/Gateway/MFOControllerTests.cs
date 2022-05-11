@@ -72,7 +72,7 @@ namespace MFOTest.Gateway
 
             HttpStatusCode actual = HttpStatusCode.OK;
 
-            int requestsCount = 2;
+            int requestsCount = 100;
 
             for (int i = 0; i < requestsCount; i++)
             {
