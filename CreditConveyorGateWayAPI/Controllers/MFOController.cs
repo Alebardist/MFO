@@ -1,9 +1,4 @@
-﻿using BCHGrpcService;
-
-using Grpc.Core;
-using Grpc.Net.Client;
-
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 

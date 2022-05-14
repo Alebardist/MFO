@@ -21,7 +21,7 @@ namespace SharedLib
         string dbName = "MFO", string collectionName = "UsersCredentials")
         {
             byte[] passwordHash = SHA256.HashData(new ASCIIEncoding().GetBytes(password));
-
+            bool isCorrect;
             try
             {
                 MongoDBAccessor<UserCredentials>.
@@ -29,14 +29,15 @@ namespace SharedLib
                                    Find(x => x.UserName == userName
                                         &&
                                         x.UserPassword == passwordHash).First();
+                isCorrect = true;
             }
             catch (InvalidOperationException e)
             {
                 Console.WriteLine($"Credentials not found {e.Message}");
-                return false;
+                isCorrect = false;
             }
 
-            return true;
+            return isCorrect;
         }
 
         public static string GenerateToken(string actor, string role, TokenParameters tokenParameters)
