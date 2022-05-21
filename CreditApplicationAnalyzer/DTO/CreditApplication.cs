@@ -11,8 +11,7 @@ namespace CreditApplicationsAnalyzer.DTO
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
 
-        //[Required]
-        //[BsonRepresentation(BsonType.Document)]
+        [Required]
         public Passport PassportData { get; set; }
 
         [Required]
@@ -43,8 +42,7 @@ namespace CreditApplicationsAnalyzer.DTO
         [BsonRepresentation(BsonType.String)]
         public string Education { get; set; }
 
-        //[Required]
-        //[BsonRepresentation(BsonType.Document)]
+        [Required]
         public Job JobObject { get; set; }
     }
 }
