@@ -2,7 +2,7 @@
 using MongoDB.Bson;
 using System.ComponentModel.DataAnnotations;
 
-namespace CreditApplicationsAnalyzer.DTO
+namespace SharedLib.DTO.Application
 {
     public class Job
     {

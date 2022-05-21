@@ -3,9 +3,9 @@ using MongoDB.Bson;
 
 using System.ComponentModel.DataAnnotations;
 
-namespace CreditApplicationsAnalyzer.DTO
+namespace SharedLib.DTO.Application
 {
-    internal class CreditApplication
+    public class CreditApplication
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]

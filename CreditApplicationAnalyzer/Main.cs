@@ -1,12 +1,11 @@
 ﻿using CreditApplicationAnalyzer;
 
-using CreditApplicationsAnalyzer.DTO;
-
 using Newtonsoft.Json;
 
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
+using SharedLib.DTO.Application;
 using SharedLib.MongoDB.Implementations;
 
 using System.Text;
