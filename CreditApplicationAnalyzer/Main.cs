@@ -83,9 +83,14 @@ void SendCreditApplicationToDB(CreditApplication creditApplication)
 {
     try
     {
-        MongoDBAccessor<CreditApplication>.GetMongoCollection(config.GetSection("MongoDB:DBName").Value,
-                                                        config.GetSection("MongoDB:CollectionName").Value)
-        .InsertOneAsync(creditApplication);
+        MongoDBAccessor<CreditApplication>.
+            GetMongoCollection(config.GetSection("MongoDB:DBName").Value,
+            config.GetSection("MongoDB:CollectionName").Value)
+            .InsertOneAsync(creditApplication);
+    }
+    catch (TimeoutException e)
+    {
+        logger.Fatal(e, $"Ex while connecting to DB");
     }
     catch (Exception e)
     {
