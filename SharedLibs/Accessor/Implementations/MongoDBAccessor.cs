@@ -6,10 +6,20 @@ namespace SharedLib.MongoDB.Implementations
     {
         public static IMongoCollection<T> GetMongoCollection(string dbName, string collectionName)
         {
-            MongoClient client = new();
-            IMongoDatabase mongoDatabase = client.GetDatabase(dbName);
+            IMongoCollection<T> collection = null;
+            try
+            {
+                MongoClient client = new("mongodb://localhost:27017/?readPreference=primary&directConnection=true" +
+                "&connectTimeoutMS=3000&tls=true&socketTimeoutMS=3000&serverSelectionTimeoutMS=3000");
+                IMongoDatabase mongoDatabase = client.GetDatabase(dbName);
+                collection = mongoDatabase.GetCollection<T>(collectionName);
+            }
+            catch (System.Exception ex)
+            {
+                throw;
+            }
 
-            return mongoDatabase.GetCollection<T>(collectionName);
+            return collection;
         }
     }
 }
