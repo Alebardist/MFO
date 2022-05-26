@@ -36,7 +36,7 @@ namespace MFOTest.Gateway
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"{_httpClient.BaseAddress}/CreditHistory"))
             {
                 request.Headers.Add("PassportNumbers", "1234 123456");
-                result = _httpClient.Send(request).EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result;
+                result = _httpClient.Send(request).Content.ReadAsStringAsync().Result;
             }
 
             Assert.Contains("61bb03975864f85c6b9eb53f", result);
