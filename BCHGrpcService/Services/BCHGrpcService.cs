@@ -77,6 +77,7 @@ namespace BCHGrpcService.Services
             catch (InvalidOperationException e)
             {
                 _logger.Debug(e, e.Message);
+
                 throw new RpcException(new Status(StatusCode.NotFound, request.PassportNumber));
             }
             catch (Exception e)
