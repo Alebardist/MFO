@@ -3,7 +3,6 @@
 using Google.Protobuf.WellKnownTypes;
 
 using Grpc.Core;
-using Grpc.Net.Client;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,15 +23,13 @@ namespace GatewayAPI.Controllers
     {
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
-        private readonly GrpcChannel _channel;
         private readonly Cashbox.CashboxClient _cashboxClient;
 
-        public CashboxController(ILogger logger, IConfiguration configuration)
+        public CashboxController(ILogger logger, IConfiguration configuration, Cashbox.CashboxClient cashboxClient)
         {
             _logger = logger;
             _configuration = configuration;
-            _channel = GrpcChannel.ForAddress(_configuration.GetSection("CashboxGrpcService:AddressAndPort").Value);
-            _cashboxClient = new Cashbox.CashboxClient(_channel);
+            _cashboxClient = cashboxClient;
         }
 
         [HttpPost]

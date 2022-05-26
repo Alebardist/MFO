@@ -2,6 +2,8 @@ using AspNetCoreRateLimit;
 
 using BCHGrpcService;
 
+using CashboxGrpcService;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -84,6 +86,10 @@ namespace GatewayAPI
 
             services.AddGrpcClient<BCHGrpc.BCHGrpcClient>(options =>
                 options.Address = new Uri(Configuration.GetSection("BCHGrpcService:AddressAndPort").Value)
+            );
+
+            services.AddGrpcClient<Cashbox.CashboxClient>(options =>
+                options.Address = new Uri(Configuration.GetSection("CashboxGrpcService:AddressAndPort").Value)
             );
 
             services.AddAuthentication(
