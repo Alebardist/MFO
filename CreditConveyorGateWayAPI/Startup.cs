@@ -1,5 +1,7 @@
 using AspNetCoreRateLimit;
 
+using BCHGrpcService;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -13,6 +15,7 @@ using MongoDB.Driver;
 
 using Serilog;
 
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -75,8 +78,13 @@ namespace GatewayAPI
                 WriteTo.MongoDB(new MongoClient().GetDatabase(Configuration.GetSection("MongoDB:DBName").Value),
                                 collectionName: Configuration.GetSection("MongoDB:LogsCollection").Value).
                 CreateLogger();
+
             services.AddSingleton(typeof(ILogger), serilog);
             services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+
+            services.AddGrpcClient<BCHGrpc.BCHGrpcClient>(options =>
+                options.Address = new Uri(Configuration.GetSection("BCHGrpcService:AddressAndPort").Value)
+            );
 
             services.AddAuthentication(
                 JwtBearerDefaults.AuthenticationScheme)

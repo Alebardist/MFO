@@ -1,10 +1,8 @@
 ﻿using BCHGrpcService;
 
 using Grpc.Core;
-using Grpc.Net.Client;
 
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 
 using Serilog;
 
@@ -17,12 +15,12 @@ namespace GatewayAPI.Controllers
     public class BCHController : ControllerBase
     {
         private readonly ILogger _logger;
-        private readonly IConfiguration _configuration;
+        private readonly BCHGrpc.BCHGrpcClient _client;
 
-        public BCHController(ILogger logger, IConfiguration configuration)
+        public BCHController(ILogger logger, BCHGrpc.BCHGrpcClient client)
         {
             _logger = logger;
-            _configuration = configuration;
+            _client = client;
         }
 
         /// <summary>
@@ -48,11 +46,7 @@ namespace GatewayAPI.Controllers
 
             try
             {
-                var channel = GrpcChannel.ForAddress(_configuration.GetSection("BCHGrpcService:AddressAndPort").Value);
-                var client = new BCHGrpc.BCHGrpcClient(channel);
-
-                int creditRating = client.GetRatingByPassport(new RatingRequest { PassportNumber = passport }).Rating;
-
+                int creditRating = _client.GetRatingByPassport(new RatingRequest { PassportNumber = passport }).Rating;
                 result = Ok(creditRating);
             }
             catch (RpcException e) when (e.StatusCode == Grpc.Core.StatusCode.NotFound)
@@ -91,15 +85,12 @@ namespace GatewayAPI.Controllers
 
             try
             {
-                using var channel = GrpcChannel.ForAddress(_configuration.GetSection("BCHGrpcService:AddressAndPort").Value);
-                var client = new BCHGrpc.BCHGrpcClient(channel);
-
                 var request = new CreditHistoryRequest()
                 {
                     PassportNumber = passport
                 };
 
-                result = Ok(client.GetCreditHistory(request));
+                result = Ok(_client.GetCreditHistory(request));
             }
             catch (RpcException e) when (e.StatusCode == Grpc.Core.StatusCode.NotFound)
             {
