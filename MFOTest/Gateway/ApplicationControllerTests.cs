@@ -1,17 +1,4 @@
-﻿using MongoDB.Bson;
-using MongoDB.Driver;
-
-using SharedLib.DTO.Application;
-using SharedLib.MongoDB.Implementations;
-
-using System;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Json;
-
-using Xunit;
-
-namespace MFOTest.Gateway
+﻿namespace MFOTest.Gateway
 {
     public class ApplicationControllerTests
     {

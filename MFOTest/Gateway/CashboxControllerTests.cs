@@ -1,9 +1,4 @@
-﻿using System;
-using System.Net.Http;
-
-using Xunit;
-
-namespace MFOTest.Gateway
+﻿namespace MFOTest.Gateway
 {
     public class CashboxControllerTests
     {

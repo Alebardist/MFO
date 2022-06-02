@@ -2,10 +2,6 @@
 
 using Google.Protobuf.WellKnownTypes;
 
-using Grpc.Net.Client;
-
-using Xunit;
-
 namespace MFOTest.CashboxServiceTests
 {
     public class CashboxServiceTests

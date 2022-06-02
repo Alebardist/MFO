@@ -1,13 +1,5 @@
 ﻿using BCHGrpcService;
 
-using Grpc.Core;
-using Grpc.Net.Client;
-
-using System;
-using System.Threading.Tasks;
-
-using Xunit;
-
 namespace MFOTest.BCHService
 {
     public class BCHServiceTests

@@ -1,15 +1,4 @@
-﻿using CalculationLib;
-
-using MongoDB.Driver;
-
-using SharedLib.DTO;
-using SharedLib.MongoDB.Implementations;
-
-using System.Linq;
-
-using Xunit;
-
-namespace MFOTest.CalculationLib
+﻿namespace MFOTest.CalculationLib
 {
     public class CalculationLibTests
     {

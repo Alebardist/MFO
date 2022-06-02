@@ -1,16 +1,8 @@
-﻿using MongoDB.Bson;
-using MongoDB.Driver;
-
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 using RabbitMQ.Client;
-using SharedLib.DTO.Application;
-using SharedLib.MongoDB.Implementations;
 
-using System.Linq;
 using System.Text;
-
-using Xunit;
 
 namespace MFOTest.CreditApplicationAnalyzer
 {
@@ -35,7 +27,7 @@ namespace MFOTest.CreditApplicationAnalyzer
             var factory = new ConnectionFactory() { HostName = "localhost" };
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
-{
+            {
                 var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(creditApplication));
 
                 channel.BasicPublish(exchange: "amq.direct",

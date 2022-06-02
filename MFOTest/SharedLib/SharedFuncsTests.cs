@@ -2,8 +2,6 @@
 
 using System.ComponentModel;
 
-using Xunit;
-
 namespace MFOTest.SharedLib
 {
     public class SharedFuncsTests

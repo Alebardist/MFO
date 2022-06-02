@@ -1,16 +1,3 @@
-using MongoDB.Driver;
-
-using SharedLib.DTO;
-using SharedLib.MongoDB.Implementations;
-
-using System;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Json;
-
-using Xunit;
-
 namespace MFOTest.Gateway
 {
     //NOTE: по сути, эти тесты являются интеграционными т.к. тестируя gateway мы тестируем и другие микросервисы
