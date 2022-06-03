@@ -62,10 +62,7 @@ CreditApplication GetObjectFromJSONString(string jsonString)
     try
     {
         result = JsonConvert.DeserializeObject<CreditApplication>(jsonString);
-        if (result == null)
-        {
-            throw new NullReferenceException($"{nameof(result)} is null");
-        }
+        ArgumentNullException.ThrowIfNull(result);
     }
     catch (NullReferenceException ex)
     {
