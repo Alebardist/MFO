@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 
 using MongoDB.Driver;
@@ -19,11 +20,13 @@ namespace GatewayAPI.Controllers
     {
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
+        private readonly IMemoryCache _memoryCache;
 
-        public MFOController(ILogger logger, IConfiguration configuration)
+        public MFOController(ILogger logger, IConfiguration configuration, IMemoryCache memoryCache)
         {
             _logger = logger;
             _configuration = configuration;
+            _memoryCache = memoryCache;
         }
 
         [HttpGet]
@@ -94,11 +97,19 @@ namespace GatewayAPI.Controllers
 
             try
             {
-                var result = MongoDBAccessor<Debt>.
+                Debt debtDTO = new();
+
+                if (!_memoryCache.TryGetValue(debtId, out debtDTO))
+                {
+                    debtDTO = MongoDBAccessor<Debt>.
                     GetMongoCollection(_configuration.GetSection("MongoDB:DBName").Value,
                                         _configuration.GetSection("MongoDB:CollectionName").Value).
                                         Find(x => x.Id == debtId).First();
-                reply = Ok(result);
+
+                    _memoryCache.Set(debtId, debtDTO, TimeSpan.FromMinutes(5));
+                }
+
+                reply = Ok(debtDTO);
             }
             catch (InvalidOperationException)
             {
